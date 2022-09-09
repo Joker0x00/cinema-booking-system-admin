@@ -100,30 +100,22 @@
             </div>
             <div class="text item">
               <div class="">
-                <div class="seat-example text-center" style="margin-left: 0px;">
-                  <div class="selectable-example example">
-                    <span>可选座位</span>
-                  </div>
-                  <div class="sold-example example">
-                    <span>不可选座位</span>
-                  </div>
+                <div class="block">
+                  <label>荧幕偏移量: </label>
+                  <el-slider
+                    v-model="editOrAddDialogConfig.form.offset"
+                    show-input
+                    :max="1000"
+                  />
                 </div>
-                <div class="">
-                  <div class="">
-                    <div class="">
-                      <h1>sfasdf</h1>
-                    </div>
-                    <div class="seats-wrapper">
-                      <div class="screen" :style="{'width': `${editOrAddDialogConfig.form.screen_width}px`, 'margin-left': `${editOrAddDialogConfig.form.offset}px`}"></div>
-                      <div v-for="r in editOrAddDialogConfig.form.row" :key="r" class="row">
-                        <span class="row-id">{{ r }}</span>
-                        <span v-for="c in editOrAddDialogConfig.form.column" :ref="`${r}-${c}`" :key="c" class="seat" :column-id="c" :row-id="r" :state="0" @click="changeSeatState($event)" />
-                      </div>
-                    </div>
+                <div class="seats-wrapper">
+                  <div class="screen" :style="{'width': `${editOrAddDialogConfig.form.screen_width}px`, 'margin-left': `${editOrAddDialogConfig.form.offset}px`}"></div>
+                  <div v-for="r in editOrAddDialogConfig.form.row" :key="r" class="row">
+                    <span class="row-id">{{ r }}</span>
+                    <span v-for="c in editOrAddDialogConfig.form.column" :ref="`${r}-${c}`" :key="c" class="seat" :column-id="c" :row-id="r" :state="0" @click="changeSeatState($event)" />
                   </div>
                 </div>
               </div>
-
             </div>
           </el-card>
         </el-form-item>
@@ -295,9 +287,9 @@ export default {
           row: 0,
           column: 0,
           size: 0,
-          offset: '',
+          offset: 0,
           seat_layout: '',
-          screen_width: ''
+          screen_width: 0
         },
         formRules: {
           name: [
@@ -385,7 +377,6 @@ export default {
           }
         }
       }
-      console.log(str)
       return str
     },
     states() {
@@ -486,9 +477,9 @@ export default {
         row: 0,
         column: 0,
         size: 0,
-        offset: '0',
+        offset: 0,
         seat_layout: '',
-        screen_width: '200'
+        screen_width: 200
       }
     },
     // 处理编辑电影
@@ -530,8 +521,10 @@ export default {
       for (let i = 0, k = 0; i < this.editOrAddDialogConfig.form.row; i++) {
         for (let j = 0; j < this.editOrAddDialogConfig.form.column; j++, k++) {
           if (this.seat_layout[k] === '1') {
+            this.states[i][j] = 1
             this.$refs[`${i + 1}-${j + 1}`][0].style.backgroundImage = 'none'
           } else {
+            this.states[i][j] = 0
             this.$refs[`${i + 1}-${j + 1}`][0].style.backgroundImage = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAY9JREFUSA3tVs1qg0AQ3l1/i5eCFC8+QSC0+BQ999QeC32t9lLovac8RQwk6BOUXLzVitFE0/mEDVIiJsbkUgeM7jjzfd/OjpvlrGZhGL6uVqvnsix5zX3yoxBia5rm22g0etkL5vt+WRTFtm8DJrDrpKI+wExJXd3VyzMw/1axf5YDpe6IqRSPUJZlGdQdmN4eBixgAps4nmRGRUyOCTneXddlnHOWJEkv5CAFFjCBTeOP2Wz2CXI+nU7vqZkmnudVAXBuNptKpWVZGHa2OI4ZdTPTNK3CIB42n89TarYHQWpuHcfJoEqaqqqViFNKDhKUV5ICGxy2bQt6d4cfU1EUQ5LKO4KQ3NWQW5+MxAEXCbraNZd8can7QHypSrOh1EOpz1YBtQkZOw+2zK67V1teI7FhGGy9XjfpavWDWNf1xrhGYtpTGa5z2f/6jmkZFPwff0VR1H0xj1yL5XKJhv3hQRDoaZriILClKz8S5+hwIk3ptHNTHTtowBeLxXWe5/2d8vZIoi4X4/H4myZY/AJMWAAq2pF/7QAAAABJRU5ErkJggg==)'
           }
         }
@@ -540,7 +533,7 @@ export default {
     // 将手动修改的座位表保存成字符串形式
     saveLayout() {
       this.editOrAddDialogConfig.setSeat.flag = !this.editOrAddDialogConfig.setSeat.flag
-      this.editOrAddDialogConfig.setSeat.isShow = !this.editOrAddDialogConfig.setSeat.isShow
+      // this.editOrAddDialogConfig.setSeat.isShow = !this.editOrAddDialogConfig.setSeat.isShow
     },
     // 分页器相关
     handleSizeChange(limit) {

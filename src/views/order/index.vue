@@ -82,7 +82,7 @@
       @current-change="handleCurrentChange"
     />
 
-    <el-dialog title="放映信息" :visible.sync="editOrAddDialogConfig.dialogVisible" modal width="50vw">
+    <el-dialog title="订单信息" :visible.sync="editOrAddDialogConfig.dialogVisible" modal width="50vw">
       <el-form ref="editOrAddDialogForm" :model="editOrAddDialogConfig.form" status-icon style="width: 80%" :rules="editOrAddDialogConfig.formRules">
         <el-form-item prop="user_id" :label="editOrAddDialogConfig.keyValue.user_id[1]" :label-width="tableConfig.formLabelWidth">
           <el-select
@@ -153,7 +153,7 @@
           </el-select>
         </el-form-item>
         <el-form-item prop="choose_seat" :label="editOrAddDialogConfig.keyValue.choose_seat[1]" :label-width="tableConfig.formLabelWidth">
-          <el-input v-model="choose_seat" disabled autocomplete="off" />
+          <el-input v-model="choose_seat" autocomplete="off" />
           <!-- 设置座位 -->
           <el-card class="box-card">
             <!-- <div slot="header" class="clearfix">
@@ -164,7 +164,7 @@
                 <div class="">
                   <div class="">
                     <div class="seats-wrapper">
-                      <div class="screen" :style="{'width': `${otherData.layout.states.screen_width}px`, 'margin-left': `${editOrAddDialogConfig.form.offset}px`}" />
+                      <div class="screen" :style="{'width': `${otherData.layout.states.screen_width}px`, 'margin-left': `${otherData.layout.states.offset}px`}" />
                       <div v-for="r in otherData.layout.states.row" :key="r" class="row">
                         <span class="row-id">{{ r }}</span>
                         <span v-for="c in otherData.layout.states.column" :ref="`${r}-${c}`" :key="c" class="seat" :column-id="c" :row-id="r" :state="0" @click="changeSeatState($event)" />
@@ -269,25 +269,13 @@ export default {
     }
   },
   data() {
-    const validateprice = (rule, value, callback) => {
-      let cnt = 0
-      for (let i = 0; i < value.length; i++) {
-        if (value[i] === '.') cnt++
-        if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
-          callback(new Error('输入格式有误'))
-        }
+    const validateChooseSeat = (rule, value, callback) => {
+      if (value.length === 0) {
+        callback(new Error('座位不能为空'))
+      } else {
+        callback()
       }
-      if (cnt > 1) {
-        callback(new Error('输入格式有误'))
-      }
-      const c = parseFloat(value)
-      if (isNaN(c)) {
-        callback(new Error('输入格式有误'))
-      }
-      console.log(value)
-      callback()
     }
-
     const validateExportFilename = (rule, value, callback) => {
       if (value.length > 50) {
         callback(new Error('长度不超过50'))
@@ -357,16 +345,12 @@ export default {
             value: 'total_price'
           },
           {
-            label: '订单状态',
-            value: 'status'
-          },
-          {
             label: '创建时间',
             value: 'create_time'
           }
         ],
-        labels: ['订单编号', '电影编号', '电影名称', '开始时间', '放映厅编号', '放映厅名称', '放映编号', '单价', '座位', '用户编号', '用户名', '票数', '总金额', '订单状态', '创建时间'],
-        values: ['id', 'movie_id', 'moviename', 'start_time', 'room_id', 'roomname', 'show_id', 'price', 'choose_seat', 'user_id', 'username', 'num', 'total_price', 'status', 'create_time'],
+        labels: ['订单编号', '电影编号', '电影名称', '开始时间', '放映厅编号', '放映厅名称', '放映编号', '单价', '座位', '用户编号', '用户名', '票数', '总金额',  '创建时间'],
+        values: ['id', 'movie_id', 'moviename', 'start_time', 'room_id', 'roomname', 'show_id', 'price', 'choose_seat', 'user_id', 'username', 'num', 'total_price', 'create_time'],
         data: []
       },
       pageConfig: {
@@ -411,6 +395,16 @@ export default {
             seat_layout: '',
             size: ''
           }
+        },
+        bk_layout: {
+          states: {
+            column: '',
+            offset: '',
+            row: '',
+            screen_width: '',
+            seat_layout: '',
+            size: ''
+          }
         }
       },
       editOrAddDialogConfig: {
@@ -431,6 +425,18 @@ export default {
         },
         formRules: {
           user_id: [
+            { required: true }
+          ],
+          choose_seat: [
+            { validator: validateChooseSeat, blur: 'change' }
+          ],
+          movie_id: [
+            { required: true }
+          ],
+          room_id: [
+            { required: true }
+          ],
+          show_id: [
             { required: true }
           ]
         },
@@ -477,13 +483,14 @@ export default {
   },
   computed: {
     choose_seat() {
+      const { bk_layout } = this.otherData
       const { states } = this.otherData.layout
       const res = []
       for (let r = 0; r < states.row; r++) {
         let t = 0
         for (let c = 0; c < states.column; c++) {
           const idx = r * states.column + c
-          if (states.seat_layout[idx] === '2') {
+          if (states.seat_layout[idx] === '2' && bk_layout.states.seat_layout[idx] === '0') {
             res.unshift(`${r + 1}排${t + 1}座`)
             t++
           }
@@ -553,6 +560,7 @@ export default {
         const res = await this.$API.order.refundOrder(id)
         if (res.code === 200) {
           this.$message({ type: 'success', message: '退单成功' })
+          this.getPageList(this.pageConfig.page, this.pageConfig.pageSize, this.searchConfig.vague, this.searchConfig.searchParams)
         } else {
           this.$message({ type: 'error', message: '退单失败' })
         }
@@ -678,19 +686,25 @@ export default {
     async remoteGetLayout() {
       const res = await this.$API.show.reqSeatLayout(this.editOrAddDialogConfig.form.show_id)
       if (res.code === 200) {
-        this.otherData.layout.states = res.data
+        this.otherData.layout.states = JSON.parse(JSON.stringify(res.data))
+        this.otherData.bk_layout.states = JSON.parse(JSON.stringify(res.data))
         const { row, column, seat_layout } = this.otherData.layout.states
         setTimeout(() => {
+          let rest = 0
           for (let i = 0; i < row * column; i++) {
             const r = Math.floor(i / column)
             const c = i % column
             if (seat_layout[i] === '0') {
+              rest++
               this.$refs[`${r + 1}-${c + 1}`][0].style.backgroundImage = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAY9JREFUSA3tVs1qg0AQ3l1/i5eCFC8+QSC0+BQ999QeC32t9lLovac8RQwk6BOUXLzVitFE0/mEDVIiJsbkUgeM7jjzfd/OjpvlrGZhGL6uVqvnsix5zX3yoxBia5rm22g0etkL5vt+WRTFtm8DJrDrpKI+wExJXd3VyzMw/1axf5YDpe6IqRSPUJZlGdQdmN4eBixgAps4nmRGRUyOCTneXddlnHOWJEkv5CAFFjCBTeOP2Wz2CXI+nU7vqZkmnudVAXBuNptKpWVZGHa2OI4ZdTPTNK3CIB42n89TarYHQWpuHcfJoEqaqqqViFNKDhKUV5ICGxy2bQt6d4cfU1EUQ5LKO4KQ3NWQW5+MxAEXCbraNZd8can7QHypSrOh1EOpz1YBtQkZOw+2zK67V1teI7FhGGy9XjfpavWDWNf1xrhGYtpTGa5z2f/6jmkZFPwff0VR1H0xj1yL5XKJhv3hQRDoaZriILClKz8S5+hwIk3ptHNTHTtowBeLxXWe5/2d8vZIoi4X4/H4myZY/AJMWAAq2pF/7QAAAABJRU5ErkJggg==)'
             } else if (seat_layout[i] === '2') {
               this.$refs[`${r + 1}-${c + 1}`][0].style.backgroundImage = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAeRJREFUSA3tlr9Lw0AUx99dmyZtpRbBX6AOoiAG1KF1EXFUcBMEHRX/LV0EFyfBUhwFJwWdXC2CIKKIttU0TXLPd6kJaaFQz3bSB0kud+99P3ePl7swiNjZ4uz+h+PueAgs0v3rZowBpjXtYPXydi8QiwcN+ZTQlbEBFmNd5YKHyM4fXncJEYJ5FCxX2m2o1JearVlsAkcn0et2CD7NmVt6nMPdu0Up97rGrdY9X1NqFxbN7UDYBxfzs0XO4HCqPwVxzuH6uQIVxw18lJ9VWsDNSwU0EpfaQoijYt48kYKskDfXBIri0mgWaNy3Z8uBUtmC3FAm7GuMdH5HBLh4fIPpbBJGUrofKKjv6qlsuQgbHBnMj/cZdgCVHoNJzS8IyxWdk1o8bSFAi/EQKoclYzitySwvcCbQoKJrTCkSnCAvh4JVzaXlGdHVfAtxYDoCJsPiUgWoxv2DVTP347j/VP84ZaoBfy/VTT8C0bQ5KKDmefBiqe1etB+D3JvbWVvwZCYFj582xan9jSCdEhMZox0X2oKzehzk1Sv7Y8WFLMaR48PTZ93pVUpbde8rNaBjuMpuN83EXUnYVEJIx2e91bHb7/SNWOn08KBfslSBrLA8l9WNhNq30+Hs7Fqdr4/OlNnxsfcFxEaatII5mN4AAAAASUVORK5CYII=)'
             } else {
               this.$refs[`${r + 1}-${c + 1}`][0].style.backgroundImage = 'none'
             }
+          }
+          if (rest === 0) {
+            this.$message({ type: 'warning', message: '无余票' })
           }
         }, 200)
       } else {
@@ -781,6 +795,9 @@ export default {
       const c = e.target.getAttribute('column-id')
       const { states } = this.otherData.layout
       const idx = (r - 1) * states.column + (c - 1)
+      if (this.otherData.bk_layout.states.seat_layout[idx] != '0') {
+        return
+      }
       let state = parseInt(states.seat_layout[idx])
       state = 2 - state
       states.seat_layout = states.seat_layout.slice(0, idx) + state + states.seat_layout.slice(idx + 1)
@@ -790,6 +807,7 @@ export default {
       } else if (state === 2) {
         this.$refs[`${r}-${c}`][0].style.backgroundImage = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAaCAYAAACgoey0AAAAAXNSR0IArs4c6QAAAeRJREFUSA3tlr9Lw0AUx99dmyZtpRbBX6AOoiAG1KF1EXFUcBMEHRX/LV0EFyfBUhwFJwWdXC2CIKKIttU0TXLPd6kJaaFQz3bSB0kud+99P3ePl7swiNjZ4uz+h+PueAgs0v3rZowBpjXtYPXydi8QiwcN+ZTQlbEBFmNd5YKHyM4fXncJEYJ5FCxX2m2o1JearVlsAkcn0et2CD7NmVt6nMPdu0Up97rGrdY9X1NqFxbN7UDYBxfzs0XO4HCqPwVxzuH6uQIVxw18lJ9VWsDNSwU0EpfaQoijYt48kYKskDfXBIri0mgWaNy3Z8uBUtmC3FAm7GuMdH5HBLh4fIPpbBJGUrofKKjv6qlsuQgbHBnMj/cZdgCVHoNJzS8IyxWdk1o8bSFAi/EQKoclYzitySwvcCbQoKJrTCkSnCAvh4JVzaXlGdHVfAtxYDoCJsPiUgWoxv2DVTP347j/VP84ZaoBfy/VTT8C0bQ5KKDmefBiqe1etB+D3JvbWVvwZCYFj582xan9jSCdEhMZox0X2oKzehzk1Sv7Y8WFLMaR48PTZ93pVUpbde8rNaBjuMpuN83EXUnYVEJIx2e91bHb7/SNWOn08KBfslSBrLA8l9WNhNq30+Hs7Fqdr4/OlNnxsfcFxEaatII5mN4AAAAASUVORK5CYII=)'
       }
+      this.editOrAddDialogConfig.form.choose_seat = this.choose_seat
     },
     // 搜索关键字
     searchOrderByUsername() {

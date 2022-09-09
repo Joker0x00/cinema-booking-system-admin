@@ -102,6 +102,9 @@
         <el-form-item prop="phone_number" :label="editOrAddDialogConfig.keyValue.phone_number[1]" :label-width="tableConfig.formLabelWidth">
           <el-input v-model="editOrAddDialogConfig.form.phone_number" autocomplete="off" />
         </el-form-item>
+        <el-form-item prop="balance" :label="editOrAddDialogConfig.keyValue.balance[1]" :label-width="tableConfig.formLabelWidth">
+          <el-input v-model="editOrAddDialogConfig.form.balance" autocomplete="off" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editOrAddDialogConfig.dialogVisible = false">取 消</el-button>
@@ -184,6 +187,25 @@ export default {
       }
     }
 
+    const validateBalance = (rule, value, callback) => {
+      let cnt = 0
+      for (let i = 0; i < value.length; i++) {
+        if (value[i] === '.') cnt++
+        if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
+          callback(new Error('输入格式有误'))
+        }
+      }
+      if (cnt > 1) {
+        callback(new Error('输入格式有误'))
+      }
+      const c = parseFloat(value)
+      if (isNaN(c)) {
+        callback(new Error('输入格式有误'))
+      }
+      console.log(value)
+      callback()
+    }
+
     const validateExportFilename = (rule, value, callback) => {
       if (value.length > 50) {
         callback(new Error('长度不超过50'))
@@ -216,6 +238,10 @@ export default {
           {
             label: '电话号码',
             value: 'phone_number'
+          },
+          {
+            label: '余额',
+            value: 'balance'
           }
         ],
         labels: ['用户编号', '用户名', '密码', '性别', '生日', '电话号码'],
@@ -251,7 +277,8 @@ export default {
           password: '',
           sex: '',
           birthday: '',
-          phone_number: ''
+          phone_number: '',
+          balance: 0
         },
         formRules: {
           name: [
@@ -264,6 +291,10 @@ export default {
           ],
           phone_number: [
             { validator: validatePhoneNumber }
+          ],
+          balance: [
+            { required: true },
+            { validator: validateBalance }
           ]
         },
         keyValue: {
@@ -272,7 +303,8 @@ export default {
           password: ['password', '密码'],
           sex: ['sex', '性别'],
           birthday: ['birthday', '生日'],
-          phone_number: ['phone_number', '电话号码']
+          phone_number: ['phone_number', '电话号码'],
+          balance: ['phone_number', '余额']
         }
       },
       // export config
