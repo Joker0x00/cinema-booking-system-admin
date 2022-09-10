@@ -1,69 +1,104 @@
 <template>
-  <div class="login-container">
-    <!-- 展示表单属性 -->
-    <!-- model收集表单数据 rules表单验证规则 -->
-    <el-form ref="loginForm" status-icon :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <!-- 标题 -->
-      <div class="title-container">
-        <h3 class="title">电影订票后台管理系统</h3>
+  <el-row>
+    <el-col :span="8" class="slide">
+      <h2 style="text-align: center">热映电影</h2>
+      <div style="height:91vh;overflow:auto">
+        <el-card v-for="m in movies.list" :key="m.id" class="text item" style="text-align:center; margin-top: 10px">
+          <div slot="header" class="clearfix">
+            <label>{{ m.name }}</label>
+          </div>
+          <div class="text item">
+            <el-col :span="12">
+              <p>{{ m.info }}</p>
+            </el-col>
+            <el-col :span="12">
+              <img :src="m.image" style="height: 150px">
+            </el-col>
+          </div>
+        </el-card>
       </div>
+    </el-col>
+    <el-col :span="16">
+      <div class="login-container">
+        <!-- 展示表单属性 -->
+        <!-- model收集表单数据 rules表单验证规则 -->
+        <el-form ref="loginForm" status-icon :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+          <!-- 标题 -->
+          <div class="title-container">
+            <h3 class="title">电影订票系统</h3>
+          </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
-      </el-form-item>
+          <el-form-item prop="username">
+            <span class="svg-container">
+              <svg-icon icon-class="user" />
+            </span>
+            <el-input
+              ref="username"
+              v-model="loginForm.username"
+              placeholder="Username"
+              name="username"
+              type="text"
+              tabindex="1"
+              auto-complete="on"
+            />
+          </el-form-item>
 
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="Password"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span>
-      </el-form-item>
+          <el-form-item prop="password">
+            <span class="svg-container">
+              <svg-icon icon-class="password" />
+            </span>
+            <el-input
+              :key="passwordType"
+              ref="password"
+              v-model="loginForm.password"
+              :type="passwordType"
+              placeholder="Password"
+              name="password"
+              tabindex="2"
+              auto-complete="on"
+              @keyup.enter.native="handleLogin"
+            />
+            <span class="show-pwd" @click="showPwd">
+              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+            </span>
+          </el-form-item>
+          <img :src="image_code_url" style="float:right; height: 40px; width: 125px; margin-top: 5px; margin-left: 10px" @click="getConfirmCode">
+          <el-form-item prop="code" style="width: 300px">
+            <el-input
+              v-model="loginForm.code"
+              :maxlength="5"
+              placeholder="验证码"
+              type="text"
+              size="mini"
+            />
+          </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
+          <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
+          <div class="tips">
+            <el-switch
+              v-model="loginForm.isAdmin"
+              active-text="管理员登录"
+              inactive-text="普通用户登录"
+            />
+            <el-button type="success" round size="mini" style="float: right; margin-top: -8px">注册</el-button>
+          </div>
+
+        </el-form>
       </div>
-
-    </el-form>
-  </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
     // 前端校验是否合法，在数据库中核实
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (value.length > 50) {
+        callback(new Error('用户名不得超过50'))
       } else {
         callback()
       }
@@ -71,6 +106,15 @@ export default {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('The password can not be less than 6 digits'))
+      } else if (value.length > 50) {
+        callback(new Error('密码不得超过50'))
+      } else {
+        callback()
+      }
+    }
+    const validateCode = (rule, value, callback) => {
+      if (value.length < 5) {
+        callback(new Error('验证码位数不够'))
       } else {
         callback()
       }
@@ -78,15 +122,25 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '111111'
+        password: '111111',
+        isAdmin: false,
+        code_id: 'test',
+        code: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        code: [{ required: true, trigger: 'blur', validator: validateCode }]
+
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      movies: {
+        total: 0,
+        list: []
+      },
+      image_code_url: ''
     }
   },
   watch: {
@@ -96,6 +150,10 @@ export default {
       },
       immediate: true
     }
+  },
+  mounted() {
+    this.getMovie()
+    this.getConfirmCode()
   },
   methods: {
     // 显示密码
@@ -116,6 +174,7 @@ export default {
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
+            this.getConfirmCode()
           }).catch(() => {
             this.loading = false
           })
@@ -124,6 +183,24 @@ export default {
           return false
         }
       })
+    },
+    async getMovie() {
+      const res = await this.$API.movieDetail.reqMovieList(1, 10)
+      if (res.code === 200) {
+        this.movies.total = res.data.count
+        this.movies.list = res.data.rows
+      } else {
+        this.$message({ type: 'error', message: '获取电影信息失败' })
+      }
+    },
+    async getConfirmCode() {
+      const res = await this.$API.img.getConfirmCode()
+      if (res.code === 200) {
+        this.image_code_url = process.env.VUE_APP_BASE_API + res.data.url
+        this.loginForm.code_id = res.data.code_id
+      } else {
+        this.$message({ type: 'error', message: '获取验证码失败' })
+      }
     }
   }
 }
@@ -186,11 +263,12 @@ $bg_img: url(~@/assets/login_bg/bgimg.jpg);
   min-height: 100%;
   width: 100%;
   background-color: $bg;
-  background: $bg_img;
+  // background: $bg_img;
   background-size: 100% 100%;
   overflow: hidden;
 
   .login-form {
+    height: 100vh;
     position: relative;
     width: 520px;
     max-width: 100%;
@@ -239,6 +317,9 @@ $bg_img: url(~@/assets/login_bg/bgimg.jpg);
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
+  }
+  .slide {
+    background-color: #889aa4;
   }
 }
 </style>

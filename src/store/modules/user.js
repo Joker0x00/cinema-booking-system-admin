@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    login: false
   }
 }
 
@@ -24,33 +25,26 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_LOGIN: (state, status) => {
+    state.login = status
   }
 }
 
 const actions = {
   // user login
   async login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    // console.log(userInfo)
-    const result = await login({ username: username.trim(), password: password })
+    const { username, password, isAdmin, code_id, code } = userInfo
+    const result = await login({ username: username.trim(), password: password, isAdmin: isAdmin, code_id, code })
     // console.log(result)
     if (result.code === 20000) {
       commit('SET_TOKEN', result.data.token)
+      commit('SET_LOGIN', true)
       setToken(result.data.token)
       return 'ok'
     } else {
       return Promise.reject(new Error('fail'))
     }
-    // return new Promise((resolve, reject) => {
-    //   login({ username: username.trim(), password: password }).then(response => {
-    //     const { data } = response
-    //     commit('SET_TOKEN', data.token)
-    //     setToken(data.token)
-    //     resolve()
-    //   }).catch(error => {
-    //     reject(error)
-    //   })
-    // })
   },
 
   // get user info
