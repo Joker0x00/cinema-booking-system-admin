@@ -5,9 +5,11 @@ import { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(),
+    id: '',
     name: '',
     avatar: '',
-    login: false
+    login: false,
+    role: ''
   }
 }
 
@@ -23,11 +25,14 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_ID: (state, id) => {
+    state.id = id
+  },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  SET_LOGIN: (state, status) => {
-    state.login = status
+  SET_ROLE: (state, role) => {
+    state.role = role
   }
 }
 
@@ -37,10 +42,9 @@ const actions = {
     const { username, password, isAdmin, code_id, code } = userInfo
     const result = await login({ username: username.trim(), password: password, isAdmin: isAdmin, code_id, code })
     // console.log(result)
-    if (result.code === 20000) {
-      commit('SET_TOKEN', result.data.token)
-      commit('SET_LOGIN', true)
-      setToken(result.data.token)
+    if (result.code === 200) {
+      commit('SET_TOKEN', result.data.token) // 保存在vuex中
+      setToken(result.data.token) // 保存在本地
       return 'ok'
     } else {
       return Promise.reject(new Error('fail'))
@@ -54,13 +58,14 @@ const actions = {
         const { data } = response
 
         if (!data) {
-          return reject('Verification failed, please Login again.')
+          return reject('验证失败，请重新登录')
         }
         console.log(data)
 
-        const { name, avatar } = data
-
+        const { id, name, avatar, role } = data
+        commit('SET_ID', id)
         commit('SET_NAME', name)
+        commit('SET_ROLE', role)
         commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {

@@ -143,7 +143,7 @@ export const constantRoutes = [
       {
         path: 'profit',
         name: 'Profit',
-        component: () => import('@/views/form/index'),
+        component: () => import('@/views/profit/index'),
         meta: { title: '盈利情况', icon: 'form' }
       }
     ]

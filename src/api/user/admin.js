@@ -29,3 +29,23 @@ export const deleteAdmin = (id) => request({
     id
   }
 })
+
+// 修改密码
+export const changePass = (id, pass) => request({
+  url: 'admin/user/admin_changepass/',
+  method: 'post',
+  data: {
+    id,
+    pass
+  }
+})
+
+// 修改用户名
+export const changeUsername = (id, username) => request({
+  url: 'admin/user/admin_changeusername/',
+  method: 'post',
+  data: {
+    id,
+    username
+  }
+})
