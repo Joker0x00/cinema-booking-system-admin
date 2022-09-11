@@ -121,8 +121,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111',
+        username: '',
+        password: '',
         isAdmin: false,
         code_id: 'test',
         code: ''
@@ -174,9 +174,10 @@ export default {
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
-            this.getConfirmCode()
           }).catch(() => {
+            // 登陆失败
             this.loading = false
+            this.getConfirmCode()
           })
         } else {
           console.log('error submit!!')
