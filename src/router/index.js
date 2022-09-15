@@ -148,6 +148,42 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/select_movie',
+    component: Layout,
+    children: [
+      {
+        path: 'select_movie',
+        name: 'Select_movie',
+        component: () => import('@/views/front/select_movie/index'),
+        meta: { title: '电影', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/check_order',
+    component: Layout,
+    children: [
+      {
+        path: 'check_order',
+        name: 'Check_order',
+        component: () => import('@/views/front/check_order/index'),
+        meta: { title: '订单', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/user_info',
+    component: Layout,
+    children: [
+      {
+        path: 'user_info',
+        name: 'User_info',
+        component: () => import('@/views/front/user_info/index'),
+        meta: { title: '个人信息', icon: 'form' }
+      }
+    ]
+  },
 
   // {
   //   path: '/nested',

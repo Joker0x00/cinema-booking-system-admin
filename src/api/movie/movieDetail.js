@@ -40,6 +40,12 @@ export const reqMovieAll = () => request({
   method: 'get'
 })
 
+// 获取所有电影
+export const reqMovies = () => request({
+  url: '/admin/movie/movies/',
+  method: 'get'
+})
+
 // 处理电影类型
 // 新增电影类型
 export const addMovieType = (form) => request({

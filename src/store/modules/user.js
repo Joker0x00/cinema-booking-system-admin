@@ -9,7 +9,10 @@ const getDefaultState = () => {
     name: '',
     avatar: '',
     login: false,
-    role: ''
+    role: '',
+    sex: '',
+    phone_number: '',
+    balance: ''
   }
 }
 
@@ -33,6 +36,15 @@ const mutations = {
   },
   SET_ROLE: (state, role) => {
     state.role = role
+  },
+  SET_PHONENUMBER: (state, phone_number) => {
+    state.phone_number = phone_number
+  },
+  SET_SEX: (state, sex) => {
+    state.sex = sex
+  },
+  SET_BALANCE: (state, balance) => {
+    state.balance = balance
   }
 }
 
@@ -45,6 +57,7 @@ const actions = {
     if (result.code === 200) {
       commit('SET_TOKEN', result.data.token) // 保存在vuex中
       setToken(result.data.token) // 保存在本地
+      commit('SET_ROLE', result.data.role)
       return 'ok'
     } else {
       return Promise.reject(new Error('fail'))
@@ -54,7 +67,7 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      getInfo(state.token, state.role).then(response => {
         const { data } = response
 
         if (!data) {
@@ -62,11 +75,14 @@ const actions = {
         }
         console.log(data)
 
-        const { id, name, avatar, role } = data
+        const { id, name, avatar, role, sex, phone_number, balance } = data
         commit('SET_ID', id)
         commit('SET_NAME', name)
         commit('SET_ROLE', role)
         commit('SET_AVATAR', avatar)
+        commit('SET_SEX', sex)
+        commit('SET_PHONENUMBER', phone_number)
+        commit('SET_BALANCE', balance)
         resolve(data)
       }).catch(error => {
         reject(error)

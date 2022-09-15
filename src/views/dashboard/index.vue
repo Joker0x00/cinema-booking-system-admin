@@ -1,8 +1,8 @@
 <template>
   <div class="dashboard-container">
     <div>
-      <el-row :gutter="10">
-        <el-col :span="12">
+      <el-row>
+        <el-col :span="8">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <h2>个人信息</h2>
@@ -25,6 +25,35 @@
             </div>
           </el-card>
         </el-col>
+        <!-- <el-col :span="16">
+          <el-card class="box-card info" style="margin-left: 20px">
+            <div slot="header" class="clearfix">
+              <h2>通知面板</h2>
+            </div>
+            <div class="block">
+              <el-timeline>
+                <el-timeline-item timestamp="2018/4/12" placement="top">
+                  <el-card>
+                    <h4>更新 Github 模板</h4>
+                    <p>王小虎 提交于 2018/4/12 20:46</p>
+                  </el-card>
+                </el-timeline-item>
+                <el-timeline-item timestamp="2018/4/3" placement="top">
+                  <el-card>
+                    <h4>更新 Github 模板</h4>
+                    <p>王小虎 提交于 2018/4/3 20:46</p>
+                  </el-card>
+                </el-timeline-item>
+                <el-timeline-item timestamp="2018/4/2" placement="top">
+                  <el-card>
+                    <h4>更新 Github 模板</h4>
+                    <p>王小虎 提交于 2018/4/2 20:46</p>
+                  </el-card>
+                </el-timeline-item>
+              </el-timeline>
+            </div>
+          </el-card>
+        </el-col> -->
       </el-row>
     </div>
     <el-dialog title="修改密码" :visible.sync="passwordChangeForm.dialogVisible">
@@ -56,7 +85,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { mapState } from 'vuex'
 export default {
   name: 'Dashboard',
@@ -119,9 +147,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'name'
-    ]),
     ...mapState('user', ['id', 'name', 'role'])
   },
   methods: {
@@ -180,6 +205,14 @@ export default {
 </script>
 
 <style scoped>
+.box-card {
+  width: auto;
+  height: auto;
+}
+.box-card .info {
+  height: 100vh;
+  overflow: auto;
+}
 .text {
     font-size: 18px;
   }

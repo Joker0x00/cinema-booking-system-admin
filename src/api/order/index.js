@@ -24,3 +24,10 @@ export const refundOrder = (id) => request({
   url: `/admin/order/refund/${id}/`,
   method: 'post'
 })
+export const recharge = (id, plus) => request({
+  url: 'admin/order/recharge/',
+  method: 'post',
+  data: {
+    id, plus
+  }
+})

@@ -34,3 +34,28 @@ export const getUserName = () => request({
   url: '/admin/user/user_name/',
   method: 'get'
 })
+
+export const validateUsername = (username) => request({
+  url: '/admin/user/validate/',
+  method: 'get',
+  params: {
+    username
+  }
+})
+
+export const editInfo = (form) => request({
+  url: '/admin/user/editinfo/',
+  method: 'post',
+  data: {
+    form
+  }
+})
+
+export const changePass = (id, pass) => request({
+  url: '/admin/user/user_changepass/',
+  method: 'post',
+  data: {
+    id, pass
+  }
+})
+

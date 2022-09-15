@@ -38,3 +38,8 @@ export const reqSeatLayout = (show_id = '') => request({
   url: `/admin/show/detail/?show_id=${show_id}`,
   method: 'get'
 })
+
+export const getAllShow = (movie_id = '') => request({
+  url: `/admin/show/user_get/?movie_id=${movie_id}`,
+  method: 'get'
+})

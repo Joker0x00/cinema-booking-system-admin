@@ -19,7 +19,7 @@
       </div>
     </el-col>
     <el-col :span="16">
-      <div class="login-container">
+      <div class="login-container" @keydown.enter="handleLogin">
         <!-- 展示表单属性 -->
         <!-- model收集表单数据 rules表单验证规则 -->
         <el-form ref="loginForm" status-icon :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
@@ -121,10 +121,10 @@ export default {
     }
     return {
       loginForm: {
-        username: '',
-        password: '',
+        username: 'wy',
+        password: '123456',
         isAdmin: false,
-        code_id: 'test',
+        code_id: '',
         code: ''
       },
       loginRules: {

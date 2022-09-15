@@ -795,7 +795,7 @@ export default {
       const c = e.target.getAttribute('column-id')
       const { states } = this.otherData.layout
       const idx = (r - 1) * states.column + (c - 1)
-      if (this.otherData.bk_layout.states.seat_layout[idx] != '0') {
+      if (this.otherData.bk_layout.states.seat_layout[idx] !== '0') {
         return
       }
       let state = parseInt(states.seat_layout[idx])
