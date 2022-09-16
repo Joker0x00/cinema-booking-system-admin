@@ -138,8 +138,8 @@
               v-for="item in tableConfig.fields"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
-            </el-option>
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -416,6 +416,7 @@ export default {
       let res
       const { form } = this.editOrAddDialogConfig
       console.log(form)
+      console.log('@time', form.start_time)
       if (!form.id) {
         res = await this.$API.show.addShow(form)
       } else {
