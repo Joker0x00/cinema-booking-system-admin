@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <h1>选择电影</h1>
+  <div style="margin-top: 20px">
     <MovieList />
   </div>
 </template>

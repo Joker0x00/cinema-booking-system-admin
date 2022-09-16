@@ -153,10 +153,10 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'select_movie',
+        path: 'index',
         name: 'Select_movie',
         component: () => import('@/views/front/select_movie/index'),
-        meta: { title: '电影', icon: 'form' }
+        meta: { title: '电影购票', icon: 'form' }
       }
     ]
   },
@@ -165,10 +165,10 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'check_order',
+        path: 'index',
         name: 'Check_order',
         component: () => import('@/views/front/check_order/index'),
-        meta: { title: '订单', icon: 'form' }
+        meta: { title: '订单查询', icon: 'form' }
       }
     ]
   },
@@ -177,7 +177,7 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'user_info',
+        path: 'index',
         name: 'User_info',
         component: () => import('@/views/front/user_info/index'),
         meta: { title: '个人信息', icon: 'form' }

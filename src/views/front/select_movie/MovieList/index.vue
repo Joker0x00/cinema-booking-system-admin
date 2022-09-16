@@ -2,17 +2,34 @@
   <el-tabs v-model="tabs.activeName" type="border-card" @tab-click="handleClickTab">
     <el-tab-pane label="选择电影" name="movie">
       <h2 style="text-align: center">全部电影</h2>
+      <div style="text-align: center">
+        <label>选择类型: </label>
+        <el-select v-model="otherData.movie_type" filterable clearable placeholder="请选择" @change="handleFilter">
+          <el-option
+            v-for="item in movieType.list"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <label style="margin-left: 20px">搜索电影: </label>
+        <el-input v-model="otherData.movieName" placeholder="请输入搜索的电影名称" style="width: 15vw;" @change="handleFilter"/>
+      </div>
       <div v-show="movies.total > 0">
-        <ul v-infinite-scroll="Movieload" class="infinite-list movie" style="overflow:auto" infinite-scroll-distance="10">
-          <el-card v-for="m in movies.count" :key="m" class="infinite-list-item card">
+        <ul class="movie layout" style="overflow:auto">
+          <el-card v-for="m in movies.list" :key="m.id" class="card">
             <div slot="header" class="clearfix">
-              <label>{{ movies.list[m - 1].name }}</label>
+              <label>{{ m.name }}</label>
             </div>
             <div class="text item">
               <el-col :span="8">
                 <div class="blank">
                   <label>主演：</label>
-                  {{ movies.list[m - 1].stars }}
+                  {{ m.stars }}
+                </div>
+                <div class="blank">
+                  <label>地区：</label>
+                  {{ m.location }}
                 </div>
                 <div class="blank">
                   <label>
@@ -23,15 +40,15 @@
                   </label>
                 </div>
                 <div class="options">
-                  <el-button type="primary" @click="handleChooseShow(movies.list[m - 1].id)">购票</el-button>
+                  <el-button type="primary" @click="handleChooseShow(m.id)">购票</el-button>
                 </div>
               </el-col>
               <el-col :span="8">
                 <label>简介：</label>
-                <p>{{ movies.list[m - 1].info }}</p>
+                <p>{{ m.info }}</p>
               </el-col>
               <el-col :span="8">
-                <img :src="movies.list[m - 1].image" style="height: 150px; float: right">
+                <img :src="m.image" style="height: 150px; float: right">
               </el-col>
             </div>
           </el-card>
@@ -41,10 +58,10 @@
     <el-tab-pane label="选择场次" name="show">
       <h2 style="text-align: center">选择场次</h2>
       <div v-show="shows.total > 0">
-        <ul class="infinite-list movie" style="overflow:auto">
+        <ul class="infinite-list movie layout" style="overflow:auto">
           <el-card v-for="m in shows.total" :key="shows.list[m - 1].id" class="infinite-list-item card">
             <div class="text item">
-              <el-col :span="8">
+              <el-col :span="24">
                 <div class="blank">
                   <label>放映时间：</label>
                   <span>{{ shows.list[m - 1].start_time }}</span>
@@ -76,36 +93,34 @@
     </el-tab-pane>
     <el-tab-pane label="选择座位" name="seat">
       <h2 style="text-align: center">选择座位</h2>
-      <el-card class="order">
-        <div slot="header" class="clearfix">
-          <el-button style="float: right; padding: 3px 0" type="text">确认选择</el-button>
-        </div>
-        <div class="text item">
-          <div class="">
+      <div v-show="chooseForm.form.show_id !== ''">
+        <el-card class="layout">
+          <div class="text item">
             <div class="">
               <div class="">
-                <div class="seats-wrapper">
-                  <div class="screen" :style="{'width': `${otherData.layout.states.screen_width}px`, 'margin-left': `${otherData.layout.states.offset}px`}" />
-                  <div v-for="r in otherData.layout.states.row" :key="r" class="row">
-                    <span class="row-id">{{ r }}</span>
-                    <span v-for="c in otherData.layout.states.column" :ref="`${r}-${c}`" :key="c" class="seat" :column-id="c" :row-id="r" :state="0" @click="changeSeatState($event)" />
+                <div class="">
+                  <div class="seats-wrapper">
+                    <div class="screen" :style="{'width': `${otherData.layout.states.screen_width}px`, 'margin-left': `${otherData.layout.states.offset}px`}" />
+                    <div v-for="r in otherData.layout.states.row" :key="r" class="row">
+                      <span class="row-id">{{ r }}</span>
+                      <span v-for="c in otherData.layout.states.column" :ref="`${r}-${c}`" :key="c" class="seat" :column-id="c" :row-id="r" :state="0" @click="changeSeatState($event)" />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </el-card>
+        <div>
+          <el-tag type="info" style="margin-top: 20px">{{ choose_seat }}</el-tag>
         </div>
-      </el-card>
-      <div>
-        <el-tag type="info" style="margin-top: 20px">{{ choose_seat }}</el-tag>
+        <div>
+          <el-tag>总金额: {{ total_price | numFilter }}</el-tag>
+          <el-tag type="success" style="margin-left: 10px">票数: {{ num }}</el-tag>
+        </div>
+        <el-button type="primary" style="float: right" @click="handlePay">确认付款</el-button>
       </div>
-      <div>
-        <el-tag>总金额: {{ total_price | numFilter }}</el-tag>
-        <el-tag type="success" style="margin-left: 10px">票数: {{ num }}</el-tag>
-      </div>
-      <el-button type="primary" style="float: right" @click="handlePay">确认</el-button>
     </el-tab-pane>
-    <el-tab-pane label="下单付款" name="pay">下单付款</el-tab-pane>
   </el-tabs>
 </template>
 
@@ -127,7 +142,11 @@ export default {
   data() {
     return {
       movies: {
-        count: 0,
+        list: [],
+        total: 0,
+        bk_list: []
+      },
+      movieType: {
         list: [],
         total: 0
       },
@@ -170,7 +189,9 @@ export default {
             seat_layout: '',
             size: ''
           }
-        }
+        },
+        movie_type: '',
+        movieName: ''
       }
     }
   },
@@ -205,19 +226,22 @@ export default {
   },
   mounted() {
     this.getAllMovie()
+    this.getAllType()
   },
   methods: {
-    Movieload() {
-      if (this.movies.count < this.movies.total) {
-        this.movies.count += 1
+    async getAllType() {
+      const res = await this.$API.movieDetail.reqMovieType()
+      if (res.code === 200) {
+        this.movieType.list = res.data
+        this.movieType.total = res.data.length
       }
     },
     async getAllMovie() {
       const res = await this.$API.movieDetail.reqMovies()
       if (res.code === 200) {
+        this.movies.bk_list = res.data
         this.movies.list = res.data
         this.movies.total = this.movies.list.length
-        this.Movieload()
         console.log('@', this.movies.total)
       } else {
         this.$message({ type: 'error', message: '获取电影信息失败' })
@@ -231,9 +255,6 @@ export default {
       } else {
         this.$message({ type: 'error', message: '获取放映场次失败' })
       }
-    },
-    async getSeatInfo(show_id) {
-
     },
     async remoteGetLayout() {
       console.log(this.chooseForm.form.show_id)
@@ -269,9 +290,12 @@ export default {
       this.chooseForm.form.layout = this.otherData.layout.states.seat_layout
       this.chooseForm.form.user_id = this.$store.state.user.id
       this.chooseForm.form.total_price = this.total_price
+      console.log(this.chooseForm.form.movie_id, this.chooseForm.form.show_id, this.chooseForm.form.layout)
+      if (this.chooseForm.form.show_id === '' || this.chooseForm.form.layout === '') return
       const res = await this.$API.order.addOrder(this.chooseForm.form)
       if (res.code === 200) {
         this.$message({ type: 'success', message: '下单成功' })
+        this.$router.push({ path: '/check_order/index' })
       } else {
         this.$message({ type: 'success', message: '下单失败' })
       }
@@ -284,8 +308,6 @@ export default {
       } else if (tab.index === '2') {
         if (this.chooseForm.form.show_id === '') return
         console.log('@2')
-      } else if (tab.index === '3') {
-        console.log('@3')
       }
     },
     handleChangeTab(name) {
@@ -325,6 +347,13 @@ export default {
     },
     handlePay() {
       this.submitOrder()
+    },
+    handleFilter() {
+      console.log(this.otherData.movieName)
+      const list = this.movies.bk_list.filter((m) => ((m.category === this.otherData.movie_type || this.otherData.movie_type === '') && m.name.indexOf(this.otherData.movieName) !== -1))
+      this.movies.list = list
+      this.movies.total = list.length
+      console.log(list)
     }
   }
 }
@@ -335,13 +364,11 @@ export default {
   height: 60vh;
   overflow: auto;
 }
-.card {
-  width: 700px;
-  margin-left: 18vw;
-  margin-top: 10px;
-}
 .text {
   font-size: 14px;
+}
+.card {
+  margin-bottom: 10px;
 }
 
 .item {
@@ -358,7 +385,7 @@ export default {
 .options {
   padding-bottom: 2px;
 }
-.order {
+.layout {
   width: 50vw;
   margin-left: 15vw;
 }

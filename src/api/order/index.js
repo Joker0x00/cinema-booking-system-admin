@@ -31,3 +31,7 @@ export const recharge = (id, plus) => request({
     id, plus
   }
 })
+export const getOrder = (user_id = '') => request({
+  url: `admin/order/user_order/?user_id=${user_id}`,
+  method: 'get'
+})
