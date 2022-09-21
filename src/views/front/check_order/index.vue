@@ -5,10 +5,10 @@
       <el-card v-for="o in order.list" :key="o.id" style="margin-bottom: 10px">
         <div slot="header" class="clearfix">
           <label>{{ o.movieName }}</label>
-          <el-button v-if="o.status === '未完成'" type="primary" size="mini" class="right" @click="handleRefund(o.id)">退款</el-button>
+          <el-button v-if="o.status === '未完成'" type="primary" size="small" class="right" @click="handleRefund(o.id)">退款</el-button>
           <el-tag v-else-if="o.status === '已完成'" type="success" class="right">已完成</el-tag>
           <el-tag v-else type="primary" class="right">已退票</el-tag>
-          <el-button v-if="o.status === '已完成'" type="primary" size="mini" class="right" @click="handleRefund(o.id)">评论</el-button>
+          <el-button v-if="o.status === '已完成'" type="primary" size="small" class="right" @click="handleRefund(o.id)">评论</el-button>
         </div>
         <div class="blank">
           <label>订单编号: </label>

@@ -353,7 +353,7 @@ export default {
       form: {
         id: '',
         name: '',
-        category: '',
+        category_id: '',
         stars: '',
         length: '',
         info: '',
@@ -378,14 +378,14 @@ export default {
           { validator: validateMovieLength, trigger: 'change' }
         ],
         info: [
-          { required: true, trigger: 'blur' },
+          // { required: true, trigger: 'blur' },
           { validator: validateMovieInfo, trigger: 'change' }
         ],
         image: [
-          { required: true, trigger: 'blur' }
+          // { required: true, trigger: 'blur' }
         ],
         location: [
-          { required: true, trigger: 'blur' },
+          // { required: true, trigger: 'blur' },
           { validator: validateMovieLocation, trigger: 'change' }
         ]
       },
@@ -435,6 +435,7 @@ export default {
     handleEdit($index, row) {
       this.form = { ...row }
       console.log(this.form)
+      this.form.category_id = this.form.category
       this.dialogFormVisible = true
     },
     // 删除电影

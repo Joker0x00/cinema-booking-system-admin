@@ -94,8 +94,8 @@
             <el-date-picker
               v-model="editOrAddDialogConfig.form.start_time"
               type="datetime"
-              placeholder="选择日期时间">
-            </el-date-picker>
+              placeholder="选择日期时间"
+            />
           </div>
         </el-form-item>
         <el-form-item prop="price" :label="editOrAddDialogConfig.keyValue.price[1]" :label-width="tableConfig.formLabelWidth">
