@@ -201,12 +201,10 @@ export default {
       const { states } = this.otherData.layout
       const res = []
       for (let r = 0; r < states.row; r++) {
-        let t = 0
         for (let c = 0; c < states.column; c++) {
           const idx = r * states.column + c
           if (states.seat_layout[idx] === '2' && bk_layout.states.seat_layout[idx] === '0') {
-            res.unshift(`${r + 1}排${t + 1}座`)
-            t++
+            res.unshift(`${r + 1}排${c + 1}座`)
           }
         }
       }
@@ -290,8 +288,11 @@ export default {
       this.chooseForm.form.layout = this.otherData.layout.states.seat_layout
       this.chooseForm.form.user_id = this.$store.state.user.id
       this.chooseForm.form.total_price = this.total_price
-      console.log(this.chooseForm.form.movie_id, this.chooseForm.form.show_id, this.chooseForm.form.layout)
       if (this.chooseForm.form.show_id === '' || this.chooseForm.form.layout === '') return
+      if (this.choose_seat.length === 0) {
+        this.$message({ type: 'info', message: '请选择座位' })
+        return
+      }
       const res = await this.$API.order.addOrder(this.chooseForm.form)
       if (res.code === 200) {
         this.$message({ type: 'success', message: '下单成功' })

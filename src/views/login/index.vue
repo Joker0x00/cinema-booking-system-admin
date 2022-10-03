@@ -81,19 +81,23 @@
               active-text="管理员登录"
               inactive-text="普通用户登录"
             />
-            <el-button type="success" round size="mini" style="float: right; margin-top: -8px">注册</el-button>
+            <el-button type="success" round size="mini" style="float: right; margin-top: -8px" @click.native.prevent="handleRegister">注册</el-button>
           </div>
 
         </el-form>
       </div>
     </el-col>
+    <Register v-if="isRegister" :is-register="isRegister" />
   </el-row>
 </template>
 
 <script>
-
+import Register from './register/index.vue'
 export default {
   name: 'Login',
+  components: {
+    Register
+  },
   data() {
     // 前端校验是否合法，在数据库中核实
     const validateUsername = (rule, value, callback) => {
@@ -104,9 +108,7 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else if (value.length > 50) {
+      if (value.length > 50) {
         callback(new Error('密码不得超过50'))
       } else {
         callback()
@@ -140,7 +142,8 @@ export default {
         total: 0,
         list: []
       },
-      image_code_url: ''
+      image_code_url: '',
+      isRegister: false
     }
   },
   watch: {
@@ -154,6 +157,8 @@ export default {
   mounted() {
     this.getMovie()
     this.getConfirmCode()
+    console.log(this)
+    this.$bus.$on('changeIsRegister', this.handleRegister)
   },
   methods: {
     // 显示密码
@@ -172,7 +177,8 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+            // this.$router.push({ path: this.redirect || '/' })
+            this.$router.push({ path: '/' })
             this.loading = false
           }).catch(() => {
             // 登陆失败
@@ -202,6 +208,9 @@ export default {
       } else {
         this.$message({ type: 'error', message: '获取验证码失败' })
       }
+    },
+    handleRegister() {
+      this.isRegister = !this.isRegister
     }
   }
 }

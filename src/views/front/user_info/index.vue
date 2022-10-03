@@ -62,7 +62,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="电话号码">
-          <el-input v-model.number="editForm.form.phone_number"></el-input>
+          <el-input v-model="editForm.form.phone_number"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('editForm')">提交</el-button>

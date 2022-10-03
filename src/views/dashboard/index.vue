@@ -5,7 +5,7 @@
         <el-col :span="8">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
-              <h2>个人信息</h2>
+              <h1>Hello, {{ name }}</h1>
             </div>
             <div class="text item">
               <label>用户编号：</label>
@@ -15,11 +15,15 @@
               <label>用户名：</label>
               {{ name }}
             </div>
-            <div class="text item">
+            <div class="text item" style="over-flow: auto">
               <label>身份：</label>
-              {{ role }}
+              <div v-for="role in roles" :key="role" style="margin-top: 5px;">
+                <el-tag>
+                  {{ role }}
+                </el-tag>
+              </div>
             </div>
-            <div class="text item">
+            <div v-if="roles[0] !== 'user'" class="text item">
               <el-button type="success" round size="mini" @click="changeUsername">修改用户名</el-button>
               <el-button type="primary" round size="mini" @click="changePass">修改密码</el-button>
             </div>
@@ -85,7 +89,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
   name: 'Dashboard',
   data() {
@@ -147,7 +151,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['id', 'name', 'role'])
+    ...mapGetters(['id', 'name', 'roles'])
   },
   methods: {
     changePass() {

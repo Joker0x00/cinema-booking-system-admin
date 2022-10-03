@@ -35,6 +35,20 @@
         :label="item.label"
       />
       <el-table-column
+        label="放映状态"
+        header-align="center"
+        align="center"
+      >
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.status === '即将上映' ? 'primary' : scope.row.status === '上映中' ? 'danger' : 'success'"
+            disable-transitions
+          >
+            {{ scope.row.status }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
         label="操作"
         header-align="center"
         align="center"
@@ -100,6 +114,16 @@
         </el-form-item>
         <el-form-item prop="price" :label="editOrAddDialogConfig.keyValue.price[1]" :label-width="tableConfig.formLabelWidth">
           <el-input v-model="editOrAddDialogConfig.form.price" autocomplete="off" />
+        </el-form-item>
+        <el-form-item prop="status" :label="editOrAddDialogConfig.keyValue.status[1]" :label-width="tableConfig.formLabelWidth">
+          <el-select v-model="editOrAddDialogConfig.form.status" placeholder="请选择上映状态" filterable>
+            <el-option
+              v-for="(type, index) in otherData.status"
+              :key="index.id"
+              :label="type.text"
+              :value="type.value"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -240,9 +264,13 @@ export default {
             label: '价格',
             value: 'price'
           }
+          // {
+          //   label: '放映状态',
+          //   value: 'status'
+          // }
         ],
-        labels: ['放映编号', '电影编号', '电影名称', '时长', '放映厅编号', '放映厅名称', '容纳人数', '座位布局', '行', '列', '开始时间', '价格'],
-        values: ['id', 'movie_id', 'moviename', 'length', 'room_id', 'roomname', 'size', 'seat_layout', 'row', 'column', 'start_time', 'price'],
+        labels: ['放映编号', '电影编号', '电影名称', '时长', '放映厅编号', '放映厅名称', '容纳人数', '座位布局', '行', '列', '开始时间', '价格', '放映状态'],
+        values: ['id', 'movie_id', 'moviename', 'length', 'room_id', 'roomname', 'size', 'seat_layout', 'row', 'column', 'start_time', 'price', 'status'],
         data: []
       },
       pageConfig: {
@@ -254,7 +282,12 @@ export default {
       },
       otherData: {
         movies: [],
-        rooms: []
+        rooms: [],
+        status: [
+          { text: '即将上映', value: '即将上映' },
+          { text: '上映中', value: '上映中' },
+          { text: '已结束', value: '已结束' }
+        ]
       },
       editOrAddDialogConfig: {
         dialogVisible: false,
@@ -265,7 +298,8 @@ export default {
           movie_id: '',
           room_id: '',
           start_time: '',
-          price: 0
+          price: 0,
+          status: ''
         },
         formRules: {
           movie_id: [
@@ -287,7 +321,8 @@ export default {
           room_id: ['room_id', '放映厅名称'],
           movie_id: ['length', '电影名称'],
           start_time: ['start_time', '开始时间'],
-          price: ['price', '价格']
+          price: ['price', '价格'],
+          status: ['status', '放映状态']
         },
         setSeat: {
           isShow: false,

@@ -72,7 +72,7 @@
       @current-change="handleCurrentChange"
     />
 
-    <el-dialog title="放映信息" :visible.sync="editOrAddDialogConfig.dialogVisible" modal width="50vw">
+    <el-dialog title="用户信息" :visible.sync="editOrAddDialogConfig.dialogVisible" modal width="50vw">
       <el-form ref="editOrAddDialogForm" :model="editOrAddDialogConfig.form" status-icon style="width: 80%" :rules="editOrAddDialogConfig.formRules">
         <el-form-item prop="name" :label="editOrAddDialogConfig.keyValue.name[1]" :label-width="tableConfig.formLabelWidth">
           <el-input v-model="editOrAddDialogConfig.form.name" autocomplete="off" />

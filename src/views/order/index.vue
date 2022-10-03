@@ -487,12 +487,10 @@ export default {
       const { states } = this.otherData.layout
       const res = []
       for (let r = 0; r < states.row; r++) {
-        let t = 0
         for (let c = 0; c < states.column; c++) {
           const idx = r * states.column + c
           if (states.seat_layout[idx] === '2' && bk_layout.states.seat_layout[idx] === '0') {
-            res.unshift(`${r + 1}排${t + 1}座`)
-            t++
+            res.unshift(`${r + 1}排${c + 1}座`)
           }
         }
       }

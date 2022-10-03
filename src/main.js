@@ -19,7 +19,7 @@ import API from '@/api'
 // vxe
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
-
+import { myMessage } from '@/utils/resetMessage'
 Vue.use(VXETable)
 
 /**
@@ -40,11 +40,16 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 
+Vue.prototype.$message = myMessage
+
 Vue.config.productionTip = false
 Vue.prototype.$API = API
 new Vue({
   el: '#app',
   router,
   store,
+  mounted() {
+    Vue.prototype.$bus = this
+  },
   render: h => h(App)
 })

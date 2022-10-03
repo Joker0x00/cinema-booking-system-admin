@@ -54,38 +54,169 @@ export const constantRoutes = [
       // 侧边栏名称 和 图标
       meta: { title: '首页', icon: 'dashboard' }
     }]
-  },
+  }
 
+  // {
+  //   path: '/movie',
+  //   redirect: '/movie/moviedetail',
+  //   component: Layout,
+  //   name: 'Movie',
+  //   meta: { title: '电影放映管理', icon: 'el-icon-goods', roles: ['superAdmin', 'film show manager'] },
+  //   children: [
+  //     {
+  //       path: 'moviedetail',
+  //       name: 'movieDetail',
+  //       component: () => import('@/views/movie/MovieDetail'),
+  //       meta: { title: '电影管理', roles: ['superAdmin', 'film show manager'] }
+  //     },
+  //     {
+  //       path: 'movietype',
+  //       name: 'movieType',
+  //       component: () => import('@/views/movie/MovieType'),
+  //       meta: { title: '电影类型管理', roles: ['superAdmin', 'film show manager'] }
+  //     },
+  //     {
+  //       path: 'room',
+  //       name: 'Room',
+  //       component: () => import('@/views/movie/Room'),
+  //       meta: { title: '放映厅管理', roles: ['superAdmin', 'film show manager'] }
+  //     },
+  //     {
+  //       path: 'show',
+  //       name: 'Show',
+  //       component: () => import('@/views/movie/Show'),
+  //       meta: { title: '放映管理', roles: ['superAdmin', 'film show manager'] }
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   path: '/user',
+  //   component: Layout,
+  //   // redirect: '/example/table',
+  //   name: '用户管理',
+  //   meta: { title: '用户管理', icon: 'el-icon-s-help', roles: ['superAdmin'] },
+  //   children: [
+  //     {
+  //       path: 'admin',
+  //       name: 'Admin',
+  //       component: () => import('@/views/admin/index'),
+  //       meta: { title: '管理员', icon: 'table', roles: ['superAdmin'] }
+  //     },
+  //     {
+  //       path: 'user',
+  //       name: 'User',
+  //       component: () => import('@/views/user/index'),
+  //       meta: { title: '用户', icon: 'tree', roles: ['superAdmin'] }
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   path: '/order',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Order',
+  //       component: () => import('@/views/order/index'),
+  //       meta: { title: '订单管理', icon: 'form', roles: ['superAdmin', 'ticket seller'] }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/comment',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Comment',
+  //       component: () => import('@/views/comment/index'),
+  //       meta: { title: '评论管理', icon: 'form', roles: ['superAdmin', 'Comment manager'] }
+  //     }
+  //   ]
+  // },
+  // // {
+  // //   path: '/profit',
+  // //   component: Layout,
+  // //   children: [
+  // //     {
+  // //       path: 'profit',
+  // //       name: 'Profit',
+  // //       component: () => import('@/views/profit/index'),
+  // //       meta: { title: '盈利情况', icon: 'form' }
+  // //     }
+  // //   ]
+  // // },
+  // {
+  //   path: '/select_movie',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Select_movie',
+  //       component: () => import('@/views/front/select_movie/index'),
+  //       meta: { title: '电影购票', icon: 'form', roles: ['user'] }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/check_order',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Check_order',
+  //       component: () => import('@/views/front/check_order/index'),
+  //       meta: { title: '订单查询', icon: 'form', roles: ['user'] }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/user_info',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'User_info',
+  //       component: () => import('@/views/front/user_info/index'),
+  //       meta: { title: '个人信息', icon: 'form', roles: ['user'] }
+  //     }
+  //   ]
+  // },
+]
+
+export const asyncRoutes = [
   {
     path: '/movie',
     redirect: '/movie/moviedetail',
     component: Layout,
     name: 'Movie',
-    meta: { title: '电影放映管理', icon: 'el-icon-goods' },
+    meta: { title: '电影放映管理', icon: 'el-icon-goods', roles: ['superAdmin', 'film show manager'] },
     children: [
       {
         path: 'moviedetail',
         name: 'movieDetail',
         component: () => import('@/views/movie/MovieDetail'),
-        meta: { title: '电影管理' }
+        meta: { title: '电影管理', roles: ['superAdmin', 'film show manager'] }
       },
       {
         path: 'movietype',
         name: 'movieType',
         component: () => import('@/views/movie/MovieType'),
-        meta: { title: '电影类型管理' }
+        meta: { title: '电影类型管理', roles: ['superAdmin', 'film show manager'] }
       },
       {
         path: 'room',
         name: 'Room',
         component: () => import('@/views/movie/Room'),
-        meta: { title: '放映厅管理' }
+        meta: { title: '放映厅管理', roles: ['superAdmin', 'film show manager'] }
       },
       {
         path: 'show',
         name: 'Show',
         component: () => import('@/views/movie/Show'),
-        meta: { title: '放映管理' }
+        meta: { title: '放映管理', roles: ['superAdmin', 'film show manager'] }
       }
     ]
   },
@@ -95,19 +226,19 @@ export const constantRoutes = [
     component: Layout,
     // redirect: '/example/table',
     name: '用户管理',
-    meta: { title: '用户管理', icon: 'el-icon-s-help' },
+    meta: { title: '用户管理', icon: 'el-icon-s-help', roles: ['superAdmin'] },
     children: [
       {
         path: 'admin',
         name: 'Admin',
         component: () => import('@/views/admin/index'),
-        meta: { title: '管理员', icon: 'table' }
+        meta: { title: '管理员', icon: 'table', roles: ['superAdmin'] }
       },
       {
         path: 'user',
         name: 'User',
         component: () => import('@/views/user/index'),
-        meta: { title: '用户', icon: 'tree' }
+        meta: { title: '用户', icon: 'tree', roles: ['superAdmin'] }
       }
     ]
   },
@@ -115,150 +246,83 @@ export const constantRoutes = [
   {
     path: '/order',
     component: Layout,
+    meta: { title: '订单管理', icon: 'form', roles: ['superAdmin', 'ticket seller'] },
     children: [
       {
         path: 'index',
         name: 'Order',
         component: () => import('@/views/order/index'),
-        meta: { title: '订单管理', icon: 'form' }
+        meta: { title: '订单管理', icon: 'form', roles: ['superAdmin', 'ticket seller'] }
       }
     ]
   },
   {
     path: '/comment',
     component: Layout,
+    meta: { title: '评论管理', icon: 'form', roles: ['superAdmin', 'Comment manager'] },
     children: [
       {
         path: 'index',
         name: 'Comment',
         component: () => import('@/views/comment/index'),
-        meta: { title: '评论管理', icon: 'form' }
+        meta: { title: '评论管理', icon: 'form', roles: ['superAdmin', 'Comment manager'] }
       }
     ]
   },
-  {
-    path: '/profit',
-    component: Layout,
-    children: [
-      {
-        path: 'profit',
-        name: 'Profit',
-        component: () => import('@/views/profit/index'),
-        meta: { title: '盈利情况', icon: 'form' }
-      }
-    ]
-  },
+  // {
+  //   path: '/profit',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'profit',
+  //       name: 'Profit',
+  //       component: () => import('@/views/profit/index'),
+  //       meta: { title: '盈利情况', icon: 'form' }
+  //     }
+  //   ]
+  // },
   {
     path: '/select_movie',
     component: Layout,
+    meta: { roles: ['user'] },
     children: [
       {
         path: 'index',
         name: 'Select_movie',
         component: () => import('@/views/front/select_movie/index'),
-        meta: { title: '电影购票', icon: 'form' }
+        meta: { title: '电影购票', icon: 'form', roles: ['user'] }
       }
     ]
   },
   {
     path: '/check_order',
     component: Layout,
+    meta: { roles: ['user'] },
     children: [
       {
         path: 'index',
         name: 'Check_order',
         component: () => import('@/views/front/check_order/index'),
-        meta: { title: '订单查询', icon: 'form' }
+        meta: { title: '订单查询', icon: 'form', roles: ['user'] }
       }
     ]
   },
   {
     path: '/user_info',
     component: Layout,
+    meta: { roles: ['user'] },
     children: [
       {
         path: 'index',
         name: 'User_info',
         component: () => import('@/views/front/user_info/index'),
-        meta: { title: '个人信息', icon: 'form' }
+        meta: { title: '个人信息', icon: 'form', roles: ['user'] }
       }
     ]
   },
-
-  // {
-  //   path: '/nested',
-  //   component: Layout,
-  //   redirect: '/nested/menu1',
-  //   name: 'Nested',
-  //   meta: {
-  //     title: 'Nested',
-  //     icon: 'nested'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'menu1',
-  //       component: () => import('@/views/nested/menu1/index'), // Parent router-view
-  //       name: 'Menu1',
-  //       meta: { title: 'Menu1' },
-  //       children: [
-  //         {
-  //           path: 'menu1-1',
-  //           component: () => import('@/views/nested/menu1/menu1-1'),
-  //           name: 'Menu1-1',
-  //           meta: { title: 'Menu1-1' }
-  //         },
-  //         {
-  //           path: 'menu1-2',
-  //           component: () => import('@/views/nested/menu1/menu1-2'),
-  //           name: 'Menu1-2',
-  //           meta: { title: 'Menu1-2' },
-  //           children: [
-  //             {
-  //               path: 'menu1-2-1',
-  //               component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-  //               name: 'Menu1-2-1',
-  //               meta: { title: 'Menu1-2-1' }
-  //             },
-  //             {
-  //               path: 'menu1-2-2',
-  //               component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-  //               name: 'Menu1-2-2',
-  //               meta: { title: 'Menu1-2-2' }
-  //             }
-  //           ]
-  //         },
-  //         {
-  //           path: 'menu1-3',
-  //           component: () => import('@/views/nested/menu1/menu1-3'),
-  //           name: 'Menu1-3',
-  //           meta: { title: 'Menu1-3' }
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       path: 'menu2',
-  //       component: () => import('@/views/nested/menu2/index'),
-  //       name: 'Menu2',
-  //       meta: { title: 'menu2' }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: 'external-link',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-  //       meta: { title: 'External Link', icon: 'link' }
-  //     }
-  //   ]
-  // },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
-
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
