@@ -44,8 +44,7 @@ module.exports = {
         pathRewrite: { '^/dev-api': '' }
       },
       '/prod-api': {
-        target: 'http://101.35.80.20:9999/',
-        // target: 'http://39.98.123.211:8170',
+        target: 'http://101.35.80.20:9999',
         pathRewrite: { '^/prod-api': '' }
       }
     }
