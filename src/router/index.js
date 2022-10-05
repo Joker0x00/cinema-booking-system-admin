@@ -320,6 +320,19 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/log',
+    component: Layout,
+    meta: { roles: ['superAdmin'] },
+    children: [
+      {
+        path: 'index',
+        name: 'Log',
+        component: () => import('@/views/log/index'),
+        meta: { title: '数据库操作日志', icon: 'form', roles: ['superAdmin'] }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

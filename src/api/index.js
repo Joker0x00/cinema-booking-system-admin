@@ -8,6 +8,7 @@ import * as user from './user/user'
 import * as admin from './user/admin'
 import * as order from './order/index'
 import * as comment from './comment/index'
+import * as log from './log/index'
 // 对外暴露
 export default {
   movieDetail,
@@ -18,5 +19,6 @@ export default {
   user,
   admin,
   order,
-  comment
+  comment,
+  log
 }

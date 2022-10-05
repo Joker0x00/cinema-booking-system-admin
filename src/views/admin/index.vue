@@ -99,8 +99,8 @@
         <el-form-item label="保存类型" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.bookType" placeholder="请选择保存文件类型">
             <el-option label=".csv" value="csv"></el-option>
-            <el-option label=".pdf" value="pdf"></el-option>
             <el-option label=".txt" value="txt"></el-option>
+            <el-option label=".json" value="json"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="选择数据" :label-width="exportConfig.formLabelWidth">
@@ -131,6 +131,7 @@
 
 <script>
 import * as XLSX from 'xlsx'
+import { saveAsTxt, saveAsJson } from '@/utils/export'
 export default {
   name: 'Admin',
   data() {
@@ -326,20 +327,27 @@ export default {
           this.$message({ message: '请至少选择一个字段', type: 'error' })
           return
         }
-        // 自定义下载的header，注意是数组中的数组哦
-        const Header = [exportConfig.form.fields]
-        const data = exportConfig.data
-        // 将JS数据数组转换为工作表。
-        const headerWs = XLSX.utils.aoa_to_sheet(Header)
-        const ws = XLSX.utils.sheet_add_json(headerWs, data, { skipHeader: true, origin: 'A2' })
-        /* 新建空的工作表 */
-        const wb = XLSX.utils.book_new()
-        // 可以自定义下载之后的sheetname
-        XLSX.utils.book_append_sheet(wb, ws, 'sheetName')
+        console.log(exportConfig.form.bookType)
+        if (exportConfig.form.bookType === 'txt') {
+          saveAsTxt(res.data, exportConfig.form.filename)
+        } else if (exportConfig.form.bookType === 'json') {
+          saveAsJson(res.data, exportConfig.form.filename)
+        } else if (exportConfig.form.bookType === 'csv') {
+          // 自定义下载的header，注意是数组中的数组哦
+          const Header = [exportConfig.form.fields]
+          const data = exportConfig.data
+          // 将JS数据数组转换为工作表。
+          const headerWs = XLSX.utils.aoa_to_sheet(Header)
+          const ws = XLSX.utils.sheet_add_json(headerWs, data, { skipHeader: true, origin: 'A2' })
+          /* 新建空的工作表 */
+          const wb = XLSX.utils.book_new()
+          // 可以自定义下载之后的sheetname
+          XLSX.utils.book_append_sheet(wb, ws, 'sheetName')
 
-        /* 生成xlsx文件 */
-        XLSX.writeFile(wb, exportConfig.form.filename + '.xlsx')
-        exportConfig.dialogExportVisible = false
+          /* 生成xlsx文件 */
+          XLSX.writeFile(wb, exportConfig.form.filename + '.xlsx')
+          exportConfig.dialogExportVisible = false
+        }
       } else {
         this.$message({ message: '获取文件失败', type: 'error' })
       }

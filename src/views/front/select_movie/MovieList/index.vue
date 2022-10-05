@@ -35,7 +35,7 @@
                   <label>
                     评分：
                     <span class="score">
-                      9.1
+                      {{ m.score }}
                     </span>
                   </label>
                 </div>
