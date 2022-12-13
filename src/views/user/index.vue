@@ -125,15 +125,15 @@
         </el-form-item>
         <el-form-item label="保存类型" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.bookType" placeholder="请选择保存文件类型">
-            <el-option label=".csv" value="csv"></el-option>
-            <el-option label=".pdf" value="pdf"></el-option>
+            <el-option label=".xlsx" value="xlsx"></el-option>
             <el-option label=".txt" value="txt"></el-option>
+            <el-option label=".json" value="json"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="选择数据" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.dataSource" placeholder="请选择数据来源">
             <el-option label="所有数据" value="all"></el-option>
-            <el-option label="选中数据" value="selected"></el-option>
+<!--            <el-option label="选中数据" value="selected"></el-option>-->
           </el-select>
         </el-form-item>
         <el-form-item prop="fields" label="选择字段" :label-width="exportConfig.formLabelWidth">
@@ -158,52 +158,75 @@
 
 <script>
 import * as XLSX from 'xlsx'
+import { validPassword, validUsername, validPhoneNumber, validBalance } from '@/utils/validate'
 export default {
   name: 'User',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (value.length > 20) {
-        callback(new Error('长度不超过20'))
-      } else {
+      // if (value.length > 20) {
+      //   callback(new Error('长度不超过20'))
+      // } else {
+      //   callback()
+      // }
+      if (validUsername(value)) {
         callback()
+      } else {
+        callback(new Error('用户名格式错误'))
       }
     }
 
     const validatePassword = (rule, value, callback) => {
-      if (value.length > 50) {
-        callback(new Error('长度不超过20'))
-      } else if (value.length < 6) {
-        callback(new Error('长度必须大于6'))
-      } else {
+      // if (value === undefined || value.trim() === '') {
+      //   callback()
+      // } else if (value.length > 50) {
+      //   callback(new Error('长度不超过20'))
+      // } else if (value.length < 6) {
+      //   callback(new Error('长度必须大于6'))
+      // } else {
+      //   callback()
+      // }
+      if (value === undefined || validPassword(value)) {
         callback()
+      } else {
+        callback(new Error('密码格式错误'))
       }
     }
 
     const validatePhoneNumber = (rule, value, callback) => {
-      if (value.length > 15) {
-        callback(new Error('长度不超过15'))
+      // if (value.length > 15) {
+      //   callback(new Error('长度不超过15'))
+      // } else {
+      //   callback()
+      // }
+      if (validPhoneNumber(value)) {
+        callback('电话号码格式错误')
       } else {
         callback()
       }
     }
 
     const validateBalance = (rule, value, callback) => {
-      let cnt = 0
-      for (let i = 0; i < value.length; i++) {
-        if (value[i] === '.') cnt++
-        if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
-          callback(new Error('输入格式有误'))
-        }
+      // let cnt = 0
+      // for (let i = 0; i < value.length; i++) {
+      //   if (value[i] === '.') cnt++
+      //   if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
+      //     callback(new Error('输入格式有误'))
+      //   }
+      // }
+      // if (cnt > 1) {
+      //   callback(new Error('输入格式有误'))
+      // }
+      // const c = parseFloat(value)
+      // if (isNaN(c)) {
+      //   callback(new Error('输入格式有误'))
+      // }
+      // console.log(value)
+      // callback()
+      if (validBalance(value.toString())) {
+        callback()
+      } else {
+        callback(new Error('金额格式错误'))
       }
-      if (cnt > 1) {
-        callback(new Error('输入格式有误'))
-      }
-      const c = parseFloat(value)
-      if (isNaN(c)) {
-        callback(new Error('输入格式有误'))
-      }
-      console.log(value)
-      callback()
     }
 
     const validateExportFilename = (rule, value, callback) => {
@@ -231,10 +254,10 @@ export default {
             label: '用户名',
             value: 'name'
           },
-          {
-            label: '密码',
-            value: 'password'
-          },
+          // {
+          //   label: '密码',
+          //   value: 'password'
+          // },
           {
             label: '电话号码',
             value: 'phone_number'
@@ -286,7 +309,6 @@ export default {
             { validator: validateUsername }
           ],
           password: [
-            { required: true },
             { validator: validatePassword }
           ],
           phone_number: [

@@ -93,12 +93,11 @@ export default {
       }
     },
     handleSizeChange(limit) {
-      console.log('@changeSize', limit)
-      this.getPageList(this.page, limit, this.searchConfig.vague, this.searchConfig.searchParams)
+      this.getPageList(this.pageConfig.page, limit)
     },
     // 处理分页
     handleCurrentChange(pager) {
-      this.getPageList(pager, this.limit, this.searchConfig.vague, this.searchConfig.searchParams)
+      this.getPageList(pager, this.pageConfig.pageSize)
     }
   }
 }

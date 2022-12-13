@@ -221,15 +221,15 @@
         </el-form-item>
         <el-form-item label="保存类型" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.bookType" placeholder="请选择保存文件类型">
-            <el-option label=".csv" value="csv" />
-            <el-option label=".pdf" value="pdf" />
+            <el-option label=".xlsx" value="xlsx" />
             <el-option label=".txt" value="txt" />
+            <el-option label=".json" value="json" />
           </el-select>
         </el-form-item>
         <el-form-item label="选择数据" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.dataSource" placeholder="请选择数据来源">
             <el-option label="所有数据" value="all" />
-            <el-option label="选中数据" value="selected" />
+<!--            <el-option label="选中数据" value="selected" />-->
           </el-select>
         </el-form-item>
         <el-form-item prop="fields" label="选择字段" :label-width="exportConfig.formLabelWidth">
@@ -731,6 +731,19 @@ export default {
           seat_layout: '',
           size: ''
         }
+      }
+      this.otherData.room = {
+        flag: false,
+        options: [],
+        list: [],
+        loading: false,
+        states: []
+      }
+      this.otherData.show = {
+        options: [],
+        list: [],
+        loading: false,
+        states: []
       }
     },
     // 删除电影

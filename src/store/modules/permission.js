@@ -49,12 +49,13 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, roles) { // 生成动态加载的路由
     return new Promise(resolve => {
-      let accessedRoutes
-      if (roles.includes('superAdmin')) { // 超级管理员拥有所有路由表
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
+      const accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      // if (roles.includes('superAdmin')) { // 超级管理员拥有所有路由表
+      //   accessedRoutes = asyncRoutes || []
+      // } else {
+      //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      // }
+      // accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

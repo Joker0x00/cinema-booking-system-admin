@@ -191,7 +191,7 @@ export const asyncRoutes = [
     path: '/movie',
     redirect: '/movie/moviedetail',
     component: Layout,
-    name: 'Movie',
+    name: '电影管理',
     meta: { title: '电影放映管理', icon: 'el-icon-goods', roles: ['superAdmin', 'film show manager'] },
     children: [
       {
@@ -224,7 +224,6 @@ export const asyncRoutes = [
   {
     path: '/user',
     component: Layout,
-    // redirect: '/example/table',
     name: '用户管理',
     meta: { title: '用户管理', icon: 'el-icon-s-help', roles: ['superAdmin'] },
     children: [
@@ -245,6 +244,7 @@ export const asyncRoutes = [
 
   {
     path: '/order',
+    name: '订单管理',
     component: Layout,
     meta: { title: '订单管理', icon: 'form', roles: ['superAdmin', 'ticket seller'] },
     children: [
@@ -258,6 +258,7 @@ export const asyncRoutes = [
   },
   {
     path: '/comment',
+    name: '评论管理',
     component: Layout,
     meta: { title: '评论管理', icon: 'form', roles: ['superAdmin', 'Comment manager'] },
     children: [
@@ -283,6 +284,7 @@ export const asyncRoutes = [
   // },
   {
     path: '/select_movie',
+    name: '选择电影',
     component: Layout,
     meta: { roles: ['user'] },
     children: [
@@ -296,6 +298,7 @@ export const asyncRoutes = [
   },
   {
     path: '/check_order',
+    name: '核对订单',
     component: Layout,
     meta: { roles: ['user'] },
     children: [
@@ -309,6 +312,7 @@ export const asyncRoutes = [
   },
   {
     path: '/user_info',
+    name: '用户信息',
     component: Layout,
     meta: { roles: ['user'] },
     children: [
@@ -322,6 +326,7 @@ export const asyncRoutes = [
   },
   {
     path: '/log',
+    name: '数据库日志',
     component: Layout,
     meta: { roles: ['superAdmin'] },
     children: [

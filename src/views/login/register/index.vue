@@ -1,13 +1,37 @@
 <template>
-  <el-dialog title="用户信息" :visible.sync="editOrAddDialogConfig.dialogVisible" modal width="50vw" @close="beforeClose">
-    <el-form ref="editOrAddDialogForm" :model="editOrAddDialogConfig.form" status-icon style="width: 80%" :rules="editOrAddDialogConfig.formRules">
-      <el-form-item prop="name" :label="editOrAddDialogConfig.keyValue.name[1]" :label-width="editOrAddDialogConfig.formLabelWidth">
+  <el-dialog
+    title="用户信息"
+    :visible.sync="editOrAddDialogConfig.dialogVisible"
+    modal
+    width="50vw"
+    @close="beforeClose"
+  >
+    <el-form
+      ref="editOrAddDialogForm"
+      :model="editOrAddDialogConfig.form"
+      status-icon
+      style="width: 80%"
+      :rules="editOrAddDialogConfig.formRules"
+    >
+      <el-form-item
+        prop="name"
+        :label="editOrAddDialogConfig.keyValue.name[1]"
+        :label-width="editOrAddDialogConfig.formLabelWidth"
+      >
         <el-input v-model="editOrAddDialogConfig.form.name" autocomplete="off" />
       </el-form-item>
-      <el-form-item prop="password" :label="editOrAddDialogConfig.keyValue.password[1]" :label-width="editOrAddDialogConfig.formLabelWidth">
+      <el-form-item
+        prop="password"
+        :label="editOrAddDialogConfig.keyValue.password[1]"
+        :label-width="editOrAddDialogConfig.formLabelWidth"
+      >
         <el-input v-model="editOrAddDialogConfig.form.password" type="password" autocomplete="off" />
       </el-form-item>
-      <el-form-item prop="sex" :label="editOrAddDialogConfig.keyValue.sex[1]" :label-width="editOrAddDialogConfig.formLabelWidth">
+      <el-form-item
+        prop="sex"
+        :label="editOrAddDialogConfig.keyValue.sex[1]"
+        :label-width="editOrAddDialogConfig.formLabelWidth"
+      >
         <el-select v-model="editOrAddDialogConfig.form.sex" placeholder="请选择性别" filterable>
           <el-option
             v-for="(item, index) in otherData.sexs"
@@ -17,7 +41,11 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item prop="phone_number" :label="editOrAddDialogConfig.keyValue.phone_number[1]" :label-width="editOrAddDialogConfig.formLabelWidth">
+      <el-form-item
+        prop="phone_number"
+        :label="editOrAddDialogConfig.keyValue.phone_number[1]"
+        :label-width="editOrAddDialogConfig.formLabelWidth"
+      >
         <el-input v-model="editOrAddDialogConfig.form.phone_number" autocomplete="off" />
       </el-form-item>
     </el-form>
@@ -34,6 +62,8 @@
 </template>
 
 <script>
+import { validPhoneNumber, validUsername, validPassword } from '@/utils/validate'
+
 export default {
   name: 'Register',
   props: {
@@ -41,48 +71,29 @@ export default {
   },
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (value.length > 20) {
-        callback(new Error('长度不超过20'))
-      } else {
+      if (validUsername(value.toString())) {
         callback()
+      } else {
+        callback(new Error('用户名格式错误'))
       }
     }
 
     const validatePassword = (rule, value, callback) => {
-      if (value.length > 50) {
-        callback(new Error('长度不超过20'))
-      } else if (value.length < 6) {
-        callback(new Error('长度必须大于6'))
-      } else {
+      if (validPassword(value.toString())) {
         callback()
+      } else {
+        callback(new Error('密码格式错误'))
       }
     }
 
     const validatePhoneNumber = (rule, value, callback) => {
-      if (value.length > 15) {
-        callback(new Error('长度不超过15'))
-      } else {
+      if (value.length === 0) {
         callback()
+      } else if (validPhoneNumber(value.toString())) {
+        callback()
+      } else {
+        callback(new Error('电话号码格式错误'))
       }
-    }
-
-    const validateBalance = (rule, value, callback) => {
-      let cnt = 0
-      for (let i = 0; i < value.length; i++) {
-        if (value[i] === '.') cnt++
-        if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
-          callback(new Error('输入格式有误'))
-        }
-      }
-      if (cnt > 1) {
-        callback(new Error('输入格式有误'))
-      }
-      const c = parseFloat(value)
-      if (isNaN(c)) {
-        callback(new Error('输入格式有误'))
-      }
-      console.log(value)
-      callback()
     }
     return {
       otherData: {
@@ -120,10 +131,6 @@ export default {
           ],
           phone_number: [
             { validator: validatePhoneNumber }
-          ],
-          balance: [
-            { required: true },
-            { validator: validateBalance }
           ]
         },
         keyValue: {

@@ -132,26 +132,25 @@
 <script>
 import * as XLSX from 'xlsx'
 import { saveAsTxt, saveAsJson } from '@/utils/export'
+import { validUsername, validPassword } from '@/utils/validate'
 export default {
   name: 'Admin',
   data() {
     const validateName = (rule, value, callback) => {
-      let cnt = 0
-      for (let i = 0; i < value.length; i++) {
-        if (value[i] === '.') cnt++
-        if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
-          callback(new Error('输入格式有误'))
-        }
+      if (validUsername(value)) {
+        callback()
+      } else {
+        callback(new Error('用户名格式错误'))
       }
-      if (cnt > 1) {
-        callback(new Error('输入格式有误'))
+    }
+
+    const validatePassword = (rule, value, callback) => {
+      if (value === undefined || validPassword(value)) {
+        callback()
+      } else {
+        callback(new Error('密码格式错误'))
       }
-      const c = parseFloat(value)
-      if (isNaN(c)) {
-        callback(new Error('输入格式有误'))
-      }
-      console.log(value)
-      callback()
+
     }
 
     const validateExportFilename = (rule, value, callback) => {
@@ -176,10 +175,10 @@ export default {
             label: '管理员用户名',
             value: 'name'
           },
-          {
-            label: '管理员密码',
-            value: 'password'
-          },
+          // {
+          //   label: '管理员密码',
+          //   value: 'password'
+          // },
           {
             label: '创建时间',
             value: 'create_time'
@@ -232,13 +231,14 @@ export default {
           create_time: ''
         },
         formRules: {
-          movie_id: [
-            { required: true }
+          name: [
+            { required: true },
+            { validator: validateName }
           ],
-          room_id: [
-            { required: true }
+          password: [
+            { validator: validatePassword }
           ],
-          start_time: [
+          role: [
             { required: true }
           ]
         },
@@ -327,12 +327,12 @@ export default {
           this.$message({ message: '请至少选择一个字段', type: 'error' })
           return
         }
-        console.log(exportConfig.form.bookType)
+        // console.log(exportConfig.form.bookType)
         if (exportConfig.form.bookType === 'txt') {
           saveAsTxt(res.data, exportConfig.form.filename)
         } else if (exportConfig.form.bookType === 'json') {
           saveAsJson(res.data, exportConfig.form.filename)
-        } else if (exportConfig.form.bookType === 'csv') {
+        } else if (exportConfig.form.bookType === 'xlsx') {
           // 自定义下载的header，注意是数组中的数组哦
           const Header = [exportConfig.form.fields]
           const data = exportConfig.data

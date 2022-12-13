@@ -145,9 +145,9 @@
         </el-form-item>
         <el-form-item label="保存类型" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.bookType" placeholder="请选择保存文件类型">
-            <el-option label=".csv" value="csv"></el-option>
-            <el-option label=".pdf" value="pdf"></el-option>
+            <el-option label=".xlsx" value="xlsx"></el-option>
             <el-option label=".txt" value="txt"></el-option>
+            <el-option label=".json" value="json"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="选择数据" :label-width="exportConfig.formLabelWidth">
@@ -178,26 +178,32 @@
 
 <script>
 import * as XLSX from 'xlsx'
+import { validBalance } from '@/utils/validate'
 export default {
   name: 'Show',
   data() {
     const validateprice = (rule, value, callback) => {
-      let cnt = 0
-      for (let i = 0; i < value.length; i++) {
-        if (value[i] === '.') cnt++
-        if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
-          callback(new Error('输入格式有误'))
-        }
+      if (validBalance(value.toString())) {
+        callback()
+      } else {
+        callback('格式错误')
       }
-      if (cnt > 1) {
-        callback(new Error('输入格式有误'))
-      }
-      const c = parseFloat(value)
-      if (isNaN(c)) {
-        callback(new Error('输入格式有误'))
-      }
-      console.log(value)
-      callback()
+      // let cnt = 0
+      // for (let i = 0; i < value.length; i++) {
+      //   if (value[i] === '.') cnt++
+      //   if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
+      //     callback(new Error('输入格式有误'))
+      //   }
+      // }
+      // if (cnt > 1) {
+      //   callback(new Error('输入格式有误'))
+      // }
+      // const c = parseFloat(value)
+      // if (isNaN(c)) {
+      //   callback(new Error('输入格式有误'))
+      // }
+      // console.log(value)
+      // callback()
     }
 
     const validateExportFilename = (rule, value, callback) => {

@@ -39,10 +39,10 @@
     <el-dialog title="修改密码" :visible.sync="passwordChangeForm.dialogVisible">
       <el-form ref="passwordChangeForm" :model="passwordChangeForm.form" status-icon :rules="passwordChangeForm.rules" label-width="100px" class="demo-ruleForm">
         <el-form-item label="密码" prop="pass">
-          <el-input type="password" v-model="passwordChangeForm.form.pass" autocomplete="off"></el-input>
+          <el-input v-model="passwordChangeForm.form.pass" type="password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkPass">
-          <el-input type="password" v-model="passwordChangeForm.form.checkPass" autocomplete="off"></el-input>
+          <el-input v-model="passwordChangeForm.form.checkPass" type="password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('passwordChangeForm')">提交</el-button>
@@ -86,6 +86,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { validUsername, validBalance, validPhoneNumber } from '@/utils/validate'
 export default {
   name: 'UserInfo',
   data() {
@@ -109,30 +110,52 @@ export default {
       }
     }
     const validateUsername = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入用户名'))
-      } else if (value.length > 50) {
-        callback(new Error('用户名不得超过50!'))
-      } else {
+      // if (value === '') {
+      //   callback(new Error('请输入用户名'))
+      // } else if (value.length > 50) {
+      //   callback(new Error('用户名不得超过50!'))
+      // } else {
+      //   callback()
+      // }
+      if (validUsername(value)) {
         callback()
+      } else {
+        callback(new Error('用户名格式错误'))
       }
     }
+    // const validatePhoneNumber = (rule, value, callback) => {
+    //   // if (value.length > 15) {
+    //   //   callback(new Error('长度不超过15'))
+    //   // } else {
+    //   //   callback()
+    //   // }
+    //   if (validPhoneNumber(value)) {
+    //     callback('电话号码格式错误')
+    //   } else {
+    //     callback()
+    //   }
+    // }
     const validateFloat = (rule, value, callback) => {
-      let cnt = 0
-      for (let i = 0; i < value.length; i++) {
-        if (value[i] === '.') cnt++
-        if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
-          callback(new Error('输入格式有误'))
-        }
+      // let cnt = 0
+      // for (let i = 0; i < value.length; i++) {
+      //   if (value[i] === '.') cnt++
+      //   if ((value[i] < '0' || value[i] > '9') && value[i] !== '.') {
+      //     callback(new Error('输入格式有误'))
+      //   }
+      // }
+      // if (cnt > 1) {
+      //   callback(new Error('输入格式有误'))
+      // }
+      // const c = parseFloat(value)
+      // if (isNaN(c)) {
+      //   callback(new Error('输入格式有误'))
+      // }
+      // callback()
+      if (validBalance(value.toString())) {
+        callback()
+      } else {
+        callback(new Error('金额格式错误'))
       }
-      if (cnt > 1) {
-        callback(new Error('输入格式有误'))
-      }
-      const c = parseFloat(value)
-      if (isNaN(c)) {
-        callback(new Error('输入格式有误'))
-      }
-      callback()
     }
     return {
       passwordChangeForm: {
@@ -161,6 +184,9 @@ export default {
         rules: {
           username: [
             { validator: validateUsername, trigger: 'blur' }
+          ],
+          phone_number: [
+            { validator: validPhoneNumber, trigger: 'blur' }
           ]
         }
       },

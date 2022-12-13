@@ -75,15 +75,15 @@
         </el-form-item>
         <el-form-item label="保存类型" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.bookType" placeholder="请选择保存文件类型">
-            <el-option label=".csv" value="csv" />
-            <el-option label=".pdf" value="pdf" />
-            <el-option label=".txt" value="txt" />
+            <el-option label=".xlsx" value="xlsx" />
+            <el-option label=".txt" value="pdf" />
+            <el-option label=".json" value="txt" />
           </el-select>
         </el-form-item>
         <el-form-item label="选择数据" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.dataSource" placeholder="请选择数据来源">
             <el-option label="所有数据" value="all" />
-            <el-option label="选中数据" value="selected" />
+<!--            <el-option label="选中数据" value="selected" />-->
           </el-select>
         </el-form-item>
         <el-form-item prop="fields" label="选择字段" :label-width="exportConfig.formLabelWidth">
@@ -108,6 +108,7 @@
 
 <script>
 import * as XLSX from 'xlsx'
+import { saveAsJson, saveAsTxt } from '@/utils/export'
 export default {
   name: 'Comment',
   data() {
@@ -257,20 +258,26 @@ export default {
           this.$message({ message: '请至少选择一个字段', type: 'error' })
           return
         }
-        // 自定义下载的header，注意是数组中的数组哦
-        const Header = [exportConfig.form.fields]
-        const data = exportConfig.data
-        // 将JS数据数组转换为工作表。
-        const headerWs = XLSX.utils.aoa_to_sheet(Header)
-        const ws = XLSX.utils.sheet_add_json(headerWs, data, { skipHeader: true, origin: 'A2' })
-        /* 新建空的工作表 */
-        const wb = XLSX.utils.book_new()
-        // 可以自定义下载之后的sheetname
-        XLSX.utils.book_append_sheet(wb, ws, 'sheetName')
+        if (exportConfig.form.bookType === 'txt') {
+          saveAsTxt(res.data, exportConfig.form.filename)
+        } else if (exportConfig.form.bookType === 'json') {
+          saveAsJson(res.data, exportConfig.form.filename)
+        } else if (exportConfig.form.bookType === 'xlsx') {
+          // 自定义下载的header，注意是数组中的数组哦
+          const Header = [exportConfig.form.fields]
+          const data = exportConfig.data
+          // 将JS数据数组转换为工作表。
+          const headerWs = XLSX.utils.aoa_to_sheet(Header)
+          const ws = XLSX.utils.sheet_add_json(headerWs, data, { skipHeader: true, origin: 'A2' })
+          /* 新建空的工作表 */
+          const wb = XLSX.utils.book_new()
+          // 可以自定义下载之后的sheetname
+          XLSX.utils.book_append_sheet(wb, ws, 'sheetName')
 
-        /* 生成xlsx文件 */
-        XLSX.writeFile(wb, exportConfig.form.filename + '.xlsx')
-        exportConfig.dialogExportVisible = false
+          /* 生成xlsx文件 */
+          XLSX.writeFile(wb, exportConfig.form.filename + '.xlsx')
+          exportConfig.dialogExportVisible = false
+        }
       } else {
         this.$message({ message: '获取文件失败', type: 'error' })
       }

@@ -119,8 +119,8 @@
         <el-form-item prop="name" :label="labels[1]" :label-width="formLabelWidth">
           <el-input ref="name" v-model="form.name" autocomplete="off" />
         </el-form-item>
-        <el-form-item prop="category_id" :label="labels[2]" :label-width="formLabelWidth">
-          <el-select ref="category_id" v-model.number="form.category_id" placeholder="请选择电影类型" filterable>
+        <el-form-item prop="category" :label="labels[2]" :label-width="formLabelWidth">
+          <el-select ref="category" v-model="form.category" placeholder="请选择电影类型" filterable>
             <el-option
               v-for="(type, index) in movieTypes"
               :key="index.id"
@@ -136,7 +136,7 @@
           <el-input ref="length" v-model.number="form.length" type="number" autocomplete="off" />
         </el-form-item>
         <el-form-item prop="info" :label="labels[5]" :label-width="formLabelWidth">
-          <el-input ref="info" v-model="form.info" autocomplete="off" />
+          <el-input ref="info" v-model="form.info" autocomplete="off" placeholder="长度不超过1000" />
         </el-form-item>
         <el-form-item prop="image" :label="labels[6]" :label-width="formLabelWidth">
           <el-upload
@@ -148,7 +148,7 @@
             :on-success="handleAvatarSuccess"
             :on-error="handleAvatarError"
             :before-upload="beforeAvatarUpload">
-            <img v-if="form.image !== ''" :src="form.image" class="avatar">
+            <img v-if="form.image !== ''" :src="form.image" class="avatar" alt="">
             <i v-else class="el-icon-plus avatar-uploader-icon" />
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件, 且不超过500kb</div>
           </el-upload>
@@ -176,15 +176,15 @@
         </el-form-item>
         <el-form-item label="保存类型" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.bookType" placeholder="请选择保存文件类型">
-            <el-option label=".csv" value="csv"></el-option>
-            <el-option label=".pdf" value="pdf"></el-option>
+            <el-option label=".xlsx" value="xlsx"></el-option>
             <el-option label=".txt" value="txt"></el-option>
+            <el-option label=".json" value="json"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="选择数据" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.dataSource" placeholder="请选择数据来源">
             <el-option label="所有数据" value="all"></el-option>
-            <el-option label="选中数据" value="selected"></el-option>
+<!--            <el-option label="选中数据" value="selected"></el-option>-->
           </el-select>
         </el-form-item>
         <el-form-item prop="fields" label="选择字段" :label-width="exportConfig.formLabelWidth">
@@ -209,6 +209,7 @@
 
 <script>
 import * as XLSX from 'xlsx'
+import { saveAsJson, saveAsTxt } from '@/utils/export'
 export default {
   name: 'MovieDetail',
   data() {
@@ -231,6 +232,8 @@ export default {
     const validateMovieLength = (rule, value, callback) => {
       if (value > 60 * 24) {
         callback(new Error('最大不超过24*60'))
+      } else if (value <= 0) {
+        callback(new Error('时长需大于0'))
       } else {
         callback()
       }
@@ -317,7 +320,7 @@ export default {
         formLabelWidth: '',
         form: {
           filename: '',
-          bookType: '.csv',
+          bookType: '',
           dataSource: 'all',
           fields: [],
           formRules: {
@@ -358,7 +361,8 @@ export default {
         length: '',
         info: '',
         image: '',
-        location: ''
+        location: '',
+        category: ''
       },
       // 电影表单数据校验
       formRules: {
@@ -366,7 +370,7 @@ export default {
           { required: true },
           { validator: validateMovieName, trigger: 'change' }
         ],
-        category_id: [
+        category: [
           { required: true, trigger: 'blur' }
         ],
         stars: [
@@ -525,6 +529,7 @@ export default {
       let res
       console.log(this.form)
       if (!this.form.id) {
+        this.form.category_id = this.form.category
         res = await this.$API.movieDetail.addMovie(this.form)
       } else {
         res = await this.$API.movieDetail.editMovie(this.form)
@@ -578,20 +583,26 @@ export default {
           this.$message({ message: '请至少选择一个字段', type: 'error' })
           return
         }
-        // 自定义下载的header，注意是数组中的数组哦
-        const Header = [exportConfig.form.fields]
-        const data = exportConfig.data
-        // 将JS数据数组转换为工作表。
-        const headerWs = XLSX.utils.aoa_to_sheet(Header)
-        const ws = XLSX.utils.sheet_add_json(headerWs, data, { skipHeader: true, origin: 'A2' })
-        /* 新建空的工作表 */
-        const wb = XLSX.utils.book_new()
-        // 可以自定义下载之后的sheetname
-        XLSX.utils.book_append_sheet(wb, ws, 'sheetName')
+        if (exportConfig.form.bookType === 'txt') {
+          saveAsTxt(res.data, exportConfig.form.filename)
+        } else if (exportConfig.form.bookType === 'json') {
+          saveAsJson(res.data, exportConfig.form.filename)
+        } else if (exportConfig.form.bookType === 'xlsx') {
+          // 自定义下载的header，注意是数组中的数组哦
+          const Header = [exportConfig.form.fields]
+          const data = exportConfig.data
+          // 将JS数据数组转换为工作表。
+          const headerWs = XLSX.utils.aoa_to_sheet(Header)
+          const ws = XLSX.utils.sheet_add_json(headerWs, data, { skipHeader: true, origin: 'A2' })
+          /* 新建空的工作表 */
+          const wb = XLSX.utils.book_new()
+          // 可以自定义下载之后的sheetname
+          XLSX.utils.book_append_sheet(wb, ws, 'sheetName')
 
-        /* 生成xlsx文件 */
-        XLSX.writeFile(wb, exportConfig.form.filename + '.xlsx')
-        exportConfig.dialogExportVisible = false
+          /* 生成xlsx文件 */
+          XLSX.writeFile(wb, exportConfig.form.filename + '.xlsx')
+          exportConfig.dialogExportVisible = false
+        }
       } else {
         this.$message({ message: '获取文件失败', type: 'error' })
       }

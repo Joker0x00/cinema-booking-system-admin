@@ -92,15 +92,15 @@
         </el-form-item>
         <el-form-item label="保存类型" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.bookType" placeholder="请选择保存文件类型">
-            <el-option label=".csv" value="csv"></el-option>
-            <el-option label=".pdf" value="pdf"></el-option>
+            <el-option label=".xlsx" value="xlsx"></el-option>
             <el-option label=".txt" value="txt"></el-option>
+            <el-option label=".json" value="json"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="选择数据" :label-width="exportConfig.formLabelWidth">
           <el-select v-model="exportConfig.form.dataSource" placeholder="请选择数据来源">
             <el-option label="所有数据" value="all"></el-option>
-            <el-option label="选中数据" value="selected"></el-option>
+<!--            <el-option label="选中数据" value="selected"></el-option>-->
           </el-select>
         </el-form-item>
         <el-form-item prop="fields" label="选择字段" :label-width="exportConfig.formLabelWidth">
